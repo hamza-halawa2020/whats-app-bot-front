@@ -31,7 +31,6 @@
             "styles": [
               "src/styles.css",
               "src/assets/css/styles.css",
-              "src/assets/css/colors.css",
               "node_modules/leaflet/dist/leaflet.css"
             ],
             "scripts": []
