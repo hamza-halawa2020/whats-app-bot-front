@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { NavbarComponent } from '../../components/navbar/navbar/navbar.component';
-import { FooterTopComponent } from '../../components/footer-top/footer-top.component';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { RouterLink } from '@angular/router';
 import { jsPDF } from 'jspdf';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-api-instructions',
@@ -12,7 +12,6 @@ import { jsPDF } from 'jspdf';
   imports: [
     CommonModule,
     NavbarComponent,
-    FooterTopComponent,
     FooterComponent,
     RouterLink,
   ],
@@ -31,7 +30,7 @@ export class ApiInstructionsComponent {
     ]`
     ;
 
-    code2=`curl -X POST http://hamza.com/api/external/messages/send 
+    code2=`curl -X POST ${environment.apiUrl}/external/messages/send 
     -H "X-API-Token: 550e8400-e29b-41d4-a716-446655440000" 
     -H "Content-Type: application/json" 
     -d '{
@@ -49,7 +48,7 @@ export class ApiInstructionsComponent {
     
   copyCurlExample() {
     const curlExample = `
-curl -X POST http://hamza.com/api/external/messages/send 
+curl -X POST ${environment.apiUrl}/external/messages/send 
 -H "X-API-Token: 550e8400-e29b-41d4-a716-446655440000" 
 -H "Content-Type: application/json" 
 -d '{

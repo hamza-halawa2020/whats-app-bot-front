@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { NavbarComponent } from "../../components/navbar/navbar/navbar.component";
-import { FooterTopComponent } from "../../components/footer-top/footer-top.component";
+import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { FooterComponent } from "../../components/footer/footer.component";
 
 declare var $: any;
@@ -11,7 +10,6 @@ declare var $: any;
   imports: [
     CommonModule,
     NavbarComponent,
-    FooterTopComponent,
     FooterComponent
 ],
   templateUrl: './about-us.component.html',

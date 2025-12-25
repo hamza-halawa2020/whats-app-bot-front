@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { NavbarComponent } from '../../components/navbar/navbar/navbar.component';
-import { FooterTopComponent } from '../../components/footer-top/footer-top.component';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { AuthService } from '../../components/login/auth.service';
 
@@ -14,7 +13,6 @@ import { AuthService } from '../../components/login/auth.service';
     RouterLink,
     ReactiveFormsModule,
     NavbarComponent,
-    FooterTopComponent,
     FooterComponent,
 
   ],
