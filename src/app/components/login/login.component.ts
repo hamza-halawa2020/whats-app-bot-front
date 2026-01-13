@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -10,6 +10,8 @@ import { AuthService } from './auth.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
+declare var bootstrap: any;
+
 @Component({
   selector: 'app-login',
  
@@ -17,7 +19,7 @@ import { RouterLink } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
   loginError: string | null = null;
   isSubmitting: boolean = false;
@@ -35,6 +37,51 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {}
+
+  ngOnDestroy(): void {
+    // Clean up any remaining modal artifacts
+    this.cleanupModal();
+  }
+
+  // Method to close modal and navigate to register page
+  navigateToRegister(): void {
+    this.closeModal();
+    setTimeout(() => {
+      // Check if we're already on the create-account page
+      if (this.router.url === '/create-account') {
+        // Just close the modal, don't navigate
+        return;
+      }
+      this.router.navigate(['/create-account']);
+    }, 300); // Small delay to ensure modal is fully closed
+  }
+
+  // Method to close the modal properly
+  private closeModal(): void {
+    const modalElement = document.getElementById('login');
+    if (modalElement) {
+      const modal = bootstrap.Modal.getInstance(modalElement);
+      if (modal) {
+        modal.hide();
+      }
+    }
+    this.cleanupModal();
+  }
+
+  // Clean up modal artifacts
+  private cleanupModal(): void {
+    // Remove any remaining backdrop
+    const backdrops = document.querySelectorAll('.modal-backdrop');
+    backdrops.forEach(backdrop => backdrop.remove());
+    
+    // Remove modal-open class from body
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    
+    // Reset any inline styles that might interfere
+    document.body.removeAttribute('style');
+  }
 
   async onLogin(): Promise<void> {
     if (this.isSubmitting || this.loginForm.invalid) {
@@ -55,13 +102,7 @@ export class LoginComponent implements OnInit {
       if (result.success) {
         this.loginError = null;
         this.loginForm.reset();
-        const modal = document.getElementById('login');
-        if (modal) {
-          const bootstrapModal = (window as any).bootstrap.Modal.getInstance(
-            modal
-          );
-          bootstrapModal?.hide();
-        }
+        this.closeModal();
         this.router.navigate(['/clients']);
       } else {
         this.loginError = result.message;

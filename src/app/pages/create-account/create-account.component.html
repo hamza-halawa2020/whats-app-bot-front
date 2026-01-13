@@ -91,7 +91,7 @@
                             </div>
                         </form>
                         <div class="text-center mt-3">
-                            <p>Already have an account? <a [routerLink]="['/login']" class="link fw-medium">Log In</a></p>
+                            <p>Already have an account? <a (click)="openLoginModal()" class="link fw-medium cursor-pointer">Log In</a></p>
                         </div>
                     </div>
                 </div>
@@ -101,3 +101,6 @@
 </section>
 
 <app-footer></app-footer>
+
+<!-- Login Modal -->
+<app-login></app-login>

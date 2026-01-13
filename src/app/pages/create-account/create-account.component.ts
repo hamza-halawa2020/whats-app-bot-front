@@ -4,7 +4,10 @@ import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
+import { LoginComponent } from '../../components/login/login.component';
 import { AuthService } from '../../services/auth.service';
+
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-create-account',
@@ -14,6 +17,7 @@ import { AuthService } from '../../services/auth.service';
     ReactiveFormsModule,
     NavbarComponent,
     FooterComponent,
+    LoginComponent,
 
   ],
   templateUrl: './create-account.component.html',
@@ -116,5 +120,14 @@ export class CreateAccountComponent implements OnInit {
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
+  }
+
+  // Method to open login modal
+  openLoginModal(): void {
+    const modalElement = document.getElementById('login');
+    if (modalElement) {
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
+    }
   }
 }

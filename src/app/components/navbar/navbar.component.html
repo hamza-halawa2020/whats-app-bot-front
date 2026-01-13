@@ -99,16 +99,18 @@
             >
               <a routerLink="/token">Token </a>
             </li>
-            <li
+           
+          </ng-container>
+          <!-- Public navigation items (always visible) -->
+
+           <li
               [ngClass]="{
                 active: current === '/api-instructions',
               }"
             >
               <a routerLink="/api-instructions">API Instructions </a>
             </li>
-          </ng-container>
           
-          <!-- Public navigation items (always visible) -->
           <li
             [ngClass]="{
               active: current === '/' || current === '',

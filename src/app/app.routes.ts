@@ -23,9 +23,9 @@ export const routes: Routes = [
   { path: 'clients', component: ClientsComponent, canActivate: [AuthGuard] },
   { path: 'groups', component: GroupsComponent, canActivate: [AuthGuard] },
   { path: 'token', component: TokensComponent, canActivate: [AuthGuard] },
-  { path: 'api-instructions', component: ApiInstructionsComponent, canActivate: [AuthGuard] },
   
   // Public routes
+  { path: 'api-instructions', component: ApiInstructionsComponent},
   { path: '404', component: ErrorComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'about-us', component: AboutUsComponent },
