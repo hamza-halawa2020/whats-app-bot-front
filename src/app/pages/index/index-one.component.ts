@@ -3,9 +3,8 @@ import { Component } from '@angular/core';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 import { Select2Module } from 'ng-select2-component';
-import { RouterLink } from '@angular/router';
 import { HowItsWorkComponent } from "../../components/how-its-work/how-its-work.component";
-import { SlickCarouselModule } from 'ngx-slick-carousel';
+
 import { propertyData } from '../../data/data';
 import { ClientComponent } from "../../components/client/client.component";
 import { FooterComponent } from "../../components/footer/footer.component";
@@ -16,11 +15,9 @@ declare var $: any;
   selector: 'app-index-one',
   imports: [
     CommonModule,
-    RouterLink,
     NavbarComponent,
     Select2Module,
     HowItsWorkComponent,
-    SlickCarouselModule,
     
     ClientComponent,
     FooterComponent,

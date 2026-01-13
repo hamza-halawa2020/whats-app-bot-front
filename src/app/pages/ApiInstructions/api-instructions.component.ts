@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
-import { RouterLink } from '@angular/router';
 import { jsPDF } from 'jspdf';
 import { environment } from '../../../environments/environment';
 
@@ -13,7 +12,6 @@ import { environment } from '../../../environments/environment';
     CommonModule,
     NavbarComponent,
     FooterComponent,
-    RouterLink,
   ],
   templateUrl: './api-instructions.component.html',
   styleUrls: ['./api-instructions.component.css'],

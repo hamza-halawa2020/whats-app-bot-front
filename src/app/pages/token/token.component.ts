@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
-import { RouterLink } from '@angular/router';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { TokensService } from './token.service';
 import { HttpClient } from '@angular/common/http';
@@ -19,7 +18,6 @@ interface TokenData {
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     NavbarComponent,
     FooterComponent,
   ],

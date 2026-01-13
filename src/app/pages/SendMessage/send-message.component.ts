@@ -8,7 +8,6 @@ import {
 } from '@angular/forms';
 import { SendMessageService } from './send-message.service';
 import { ClientsService } from '../clients/clients.service';
-import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { COUNTRY_CODES, CountryCode } from '../clients/country-codes';
@@ -38,7 +37,6 @@ interface Schedule {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     NavbarComponent,
     FooterComponent,
   ],
