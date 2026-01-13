@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from './auth.service';
+import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -14,8 +14,8 @@ declare var bootstrap: any;
 
 @Component({
   selector: 'app-login',
- 
-  imports: [ReactiveFormsModule,CommonModule,RouterLink],
+
+  imports: [ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   ngOnDestroy(): void {
     // Clean up any remaining modal artifacts
@@ -73,12 +73,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     // Remove any remaining backdrop
     const backdrops = document.querySelectorAll('.modal-backdrop');
     backdrops.forEach(backdrop => backdrop.remove());
-    
+
     // Remove modal-open class from body
     document.body.classList.remove('modal-open');
     document.body.style.overflow = '';
     document.body.style.paddingRight = '';
-    
+
     // Reset any inline styles that might interfere
     document.body.removeAttribute('style');
   }
@@ -95,24 +95,23 @@ export class LoginComponent implements OnInit, OnDestroy {
     const { email, password } = this.loginForm.value;
     console.log('Login attempt:', email, password);
 
-    try {
-      const result = await this.authService.login(email, password);
-      console.log('Login result:', result);
-
-      if (result.success) {
+    this.authService.login({ email, password }).subscribe({
+      next: (result) => {
+        console.log('Login result:', result);
         this.loginError = null;
         this.loginForm.reset();
         this.closeModal();
         this.router.navigate(['/clients']);
-      } else {
-        this.loginError = result.message;
+      },
+      error: (error) => {
+        this.loginError = error.error?.message || 'Invalid email or password';
+        console.error('Login error:', error);
+        this.isSubmitting = false;
+      },
+      complete: () => {
+        this.isSubmitting = false;
       }
-    } catch (error) {
-      this.loginError = 'An unexpected error occurred';
-      console.error('Login error:', error);
-    } finally {
-      this.isSubmitting = false;
-    }
+    });
   }
 
   togglePasswordVisibility(): void {

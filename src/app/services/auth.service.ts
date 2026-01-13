@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../../environments/environment';
 
 interface LoginResponse {
@@ -13,6 +14,7 @@ interface LoginResponse {
     name?: string;
   };
   message: string;
+  success?: boolean;
 }
 
 interface RegisterResponse {
@@ -29,11 +31,16 @@ interface RegisterResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private tokenKey = 'auth_token';
-  private userKey = 'auth_user';
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
+  private tokenKey = 'token';
+  private userKey = 'currentUser';
+  private isAuthenticatedSubject: BehaviorSubject<boolean>;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private cookieService: CookieService
+  ) {
+    this.isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
+  }
 
   // Check if user is authenticated
   isAuthenticated(): boolean {
@@ -46,13 +53,31 @@ export class AuthService {
   }
 
   // Login method
-  login(credentials: { phone: string; password?: string }): Observable<LoginResponse> {
+  login(credentials: { phone?: string; email?: string; password?: string }): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, credentials)
       .pipe(
         tap(response => {
           if (response.token) {
             this.setToken(response.token);
-            this.setUser(response.user);
+            if (response.user) {
+              this.setUser(response.user);
+            }
+            this.isAuthenticatedSubject.next(true);
+          }
+        })
+      );
+  }
+
+  // Signup method (added to match local service)
+  signup(credentials: { email: string; username: string; password?: string; phone: string }): Observable<any> {
+    return this.http.post<any>(`${environment.apiUrl}/auth/signup`, credentials)
+      .pipe(
+        tap(response => {
+          if (response.token) {
+            this.setToken(response.token);
+            if (response.user) {
+              this.setUser(response.user);
+            }
             this.isAuthenticatedSubject.next(true);
           }
         })
@@ -73,19 +98,13 @@ export class AuthService {
 
   // Get stored token
   getToken(): string | null {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem(this.tokenKey);
-    }
-    return null;
+    return this.cookieService.get(this.tokenKey) || null;
   }
 
   // Get stored user
   getUser(): any {
-    if (typeof window !== 'undefined') {
-      const user = localStorage.getItem(this.userKey);
-      return user ? JSON.parse(user) : null;
-    }
-    return null;
+    const user = this.cookieService.get(this.userKey);
+    return user ? JSON.parse(user) : null;
   }
 
   // Private methods
@@ -94,26 +113,28 @@ export class AuthService {
   }
 
   private setToken(token: string): void {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(this.tokenKey, token);
-    }
+    this.cookieService.set(this.tokenKey, token, {
+      expires: 7,
+      path: '/',
+      secure: true,
+      sameSite: 'Strict',
+    });
   }
 
   private setUser(user: any): void {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(this.userKey, JSON.stringify(user));
-    }
+    this.cookieService.set(this.userKey, JSON.stringify(user), {
+      expires: 7,
+      path: '/',
+      secure: true,
+      sameSite: 'Strict',
+    });
   }
 
   private removeToken(): void {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(this.tokenKey);
-    }
+    this.cookieService.delete(this.tokenKey, '/');
   }
 
   private removeUser(): void {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(this.userKey);
-    }
+    this.cookieService.delete(this.userKey, '/');
   }
 }
