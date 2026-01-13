@@ -4,7 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
-import { AuthService } from '../../components/login/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-create-account',
@@ -21,9 +21,12 @@ import { AuthService } from '../../components/login/auth.service';
 })
 export class CreateAccountComponent implements OnInit {
   signupForm: FormGroup;
+  loginForm: FormGroup;
   signupError: string | null = null;
+  loginError: string | null = null;
   isSubmitting: boolean = false;
   showPassword: boolean = false;
+  isLoginMode: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -31,14 +34,25 @@ export class CreateAccountComponent implements OnInit {
     private router: Router
   ) {
     this.signupForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      username: ['', [Validators.required, Validators.minLength(3)]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      email: ['', [Validators.email]],
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      password: ['', [Validators.minLength(6)]],
       phone: ['', [Validators.required, Validators.pattern(/^\d{10,15}$/)]],
+    });
+
+    this.loginForm = this.fb.group({
+      phone: ['', [Validators.required, Validators.pattern(/^\d{10,15}$/)]],
+      password: [''],
     });
   }
 
   ngOnInit(): void {}
+
+  toggleMode(): void {
+    this.isLoginMode = !this.isLoginMode;
+    this.signupError = null;
+    this.loginError = null;
+  }
 
   async onSignup(): Promise<void> {
     if (this.isSubmitting || this.signupForm.invalid) {
@@ -49,23 +63,52 @@ export class CreateAccountComponent implements OnInit {
     }
 
     this.isSubmitting = true;
-    const { email, username, password, phone } = this.signupForm.value;
-    console.log('Signup attempt:', { email, username, password, phone });
+    const { email, name, password, phone } = this.signupForm.value;
+    console.log('Signup attempt:', { email, name, password, phone });
 
     try {
-      const result = await this.authService.signup(email, username, password, phone);
+      const result = await this.authService.register({ email, name, password, phone }).toPromise();
       console.log('Signup result:', result);
 
-      if (result.success) {
+      if (result) {
         this.signupError = null;
         this.signupForm.reset();
-        this.router.navigate(['/dashboard']);
-      } else {
-        this.signupError = result.message || 'Failed to create account';
+        // After successful registration, switch to login mode
+        this.isLoginMode = true;
+        this.loginForm.patchValue({ phone });
       }
-    } catch (error) {
-      this.signupError = 'An unexpected error occurred';
+    } catch (error: any) {
+      this.signupError = error.error?.message || 'Failed to create account';
       console.error('Signup error:', error);
+    } finally {
+      this.isSubmitting = false;
+    }
+  }
+
+  async onLogin(): Promise<void> {
+    if (this.isSubmitting || this.loginForm.invalid) {
+      this.loginError = this.loginForm.invalid
+        ? 'Please fill in all required fields correctly'
+        : null;
+      return;
+    }
+
+    this.isSubmitting = true;
+    const { phone, password } = this.loginForm.value;
+    console.log('Login attempt:', { phone });
+
+    try {
+      const result = await this.authService.login({ phone, password }).toPromise();
+      console.log('Login result:', result);
+
+      if (result && result.token) {
+        this.loginError = null;
+        this.loginForm.reset();
+        this.router.navigate(['/']);
+      }
+    } catch (error: any) {
+      this.loginError = error.error?.message || 'Failed to login';
+      console.error('Login error:', error);
     } finally {
       this.isSubmitting = false;
     }

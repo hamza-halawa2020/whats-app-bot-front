@@ -11,23 +11,26 @@ import { SendMessageComponent } from './pages/SendMessage/send-message.component
 import { GroupsComponent } from './pages/groups/groups.component';
 import { TokensComponent } from './pages/token/token.component';
 import { ApiInstructionsComponent } from './pages/ApiInstructions/api-instructions.component';
+import { AuthGuard } from './guards/auth.guard';
+import { UnauthGuard } from './guards/unauth.guard';
 
 export const routes: Routes = [
   { path: '', component: IndexOneComponent },
 
-  { path: 'whatsapp', component: WhatsAppComponent },
-  { path: 'send-message', component: SendMessageComponent },
-  { path: 'clients', component: ClientsComponent },
-  { path: 'groups', component: GroupsComponent },
-  { path: 'token', component: TokensComponent },
-  { path: 'api-instructions', component: ApiInstructionsComponent },
+  // Protected routes (require authentication)
+  { path: 'whatsapp', component: WhatsAppComponent, canActivate: [AuthGuard] },
+  { path: 'send-message', component: SendMessageComponent, canActivate: [AuthGuard] },
+  { path: 'clients', component: ClientsComponent, canActivate: [AuthGuard] },
+  { path: 'groups', component: GroupsComponent, canActivate: [AuthGuard] },
+  { path: 'token', component: TokensComponent, canActivate: [AuthGuard] },
+  { path: 'api-instructions', component: ApiInstructionsComponent, canActivate: [AuthGuard] },
   
-  
+  // Public routes
   { path: '404', component: ErrorComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'about-us', component: AboutUsComponent },
 
-
-  { path: 'create-account', component: CreateAccountComponent },
+  // Auth routes (only accessible when not authenticated)
+  { path: 'create-account', component: CreateAccountComponent, canActivate: [UnauthGuard] },
 
 ];

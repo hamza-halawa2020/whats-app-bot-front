@@ -1,0 +1,19 @@
+<svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main Circle Background -->
+  <circle cx="25" cy="25" r="23" fill="#074da3"/>
+  <circle cx="25" cy="25" r="20" fill="#00a94f"/>
+  
+  <!-- WhatsApp Chat Bubble -->
+  <path d="M25 14C19.48 14 15 18.48 15 24C15 25.82 15.44 27.54 16.24 29.06L15 35L21.2 33.8C22.64 34.52 24.28 34.9 26 34.9C31.52 34.9 36 30.42 36 24.9C36 19.38 31.52 14.9 26 14.9L25 14Z" fill="white"/>
+  
+  <!-- Message Icon Inside -->
+  <path d="M21 22H29M21 25H27M21 28H25" stroke="#00a94f" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- Send Arrow -->
+  <path d="M30 20L33 23L30 26" stroke="#074da3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Connection Dots -->
+  <circle cx="18" cy="18" r="1.5" fill="#074da3" opacity="0.7"/>
+  <circle cx="32" cy="32" r="1.5" fill="#074da3" opacity="0.7"/>
+  <circle cx="18" cy="32" r="1.5" fill="#074da3" opacity="0.5"/>
+</svg>

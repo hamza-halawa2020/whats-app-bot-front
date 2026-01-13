@@ -1,7 +1,7 @@
 {
-  "name": "resido",
+  "name": "sender",
   "version": "1.0.0",
-  "description": "Resido - Angular Js Real Estate Template",
+  "description": "sender",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

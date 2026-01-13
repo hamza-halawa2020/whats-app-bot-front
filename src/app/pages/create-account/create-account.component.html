@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-lg-12 col-md-12">
                 <h2 class="ipt-title">Create An Account</h2>
-                <span class="ipn-subtitle">Register On Resido Today</span>
+                <span class="ipn-subtitle">Register On sender Today</span>
             </div>
         </div>
     </div>
@@ -28,7 +28,7 @@
                                     </span>
                                 </a>
                             </div>
-                            <h4 class="fs-2">Create Account On Resido</h4>
+                            <h4 class="fs-2">Create Account On sender</h4>
                         </div>
                         <form [formGroup]="signupForm" (ngSubmit)="onSignup()">
                             <div class="row">
@@ -44,11 +44,11 @@
                                 </div>
                                 <div class="col-lg-6 col-md-6 mb-3">
                                     <div class="form-group">
-                                        <label class="mb-2">Username</label>
-                                        <input type="text" class="form-control ps-2" formControlName="username" placeholder="Username">
-                                        <div *ngIf="signupForm.get('username')?.touched && signupForm.get('username')?.invalid" class="text-danger">
-                                            <div *ngIf="signupForm.get('username')?.errors?.['required']">Username is required</div>
-                                            <div *ngIf="signupForm.get('username')?.errors?.['minlength']">Username must be at least 3 characters</div>
+                                        <label class="mb-2">Name</label>
+                                        <input type="text" class="form-control ps-2" formControlName="name" placeholder="Full Name">
+                                        <div *ngIf="signupForm.get('name')?.touched && signupForm.get('name')?.invalid" class="text-danger">
+                                            <div *ngIf="signupForm.get('name')?.errors?.['required']">Name is required</div>
+                                            <div *ngIf="signupForm.get('name')?.errors?.['minlength']">Name must be at least 3 characters</div>
                                         </div>
                                     </div>
                                 </div>

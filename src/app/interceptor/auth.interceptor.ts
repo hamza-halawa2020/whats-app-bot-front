@@ -7,18 +7,29 @@ import {
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
+import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private cookieService: CookieService) {}
+  constructor(
+    private cookieService: CookieService,
+    private authService: AuthService
+  ) {}
 
   intercept(
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
     console.log(`Interceptor processing request: ${request.urlWithParams}`);
-    const token = this.cookieService.get('token');
-    console.log(`Token retrieved from cookies: ${token || 'No token found'}`);
+    
+    // Try to get token from AuthService first, then fallback to cookies
+    let token = this.authService.getToken();
+    if (!token) {
+      token = this.cookieService.get('token');
+    }
+    
+    console.log(`Token retrieved: ${token || 'No token found'}`);
+    
     if (token) {
       console.log(`Adding Authorization header with token: Bearer ${token}`);
       const clonedRequest = request.clone({
