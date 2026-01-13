@@ -25,7 +25,7 @@ export const routes: Routes = [
   { path: 'token', component: TokensComponent, canActivate: [AuthGuard] },
   
   // Public routes
-  { path: 'api-instructions', component: ApiInstructionsComponent},
+  { path: 'documentation', component: ApiInstructionsComponent},
   { path: '404', component: ErrorComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'about-us', component: AboutUsComponent },

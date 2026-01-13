@@ -1,84 +1,500 @@
 <app-navbar/>
-<div class="page-title">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12 col-md-12">
-                <h2 class="ipt-title">About Us</h2>
-                <span class="ipn-subtitle">Who we are & our mission</span>
+
+<!-- Hero Section -->
+<section class="hero-section bg-primary position-relative py-5">
+    <div class="hero-overlay"></div>
+    <div class="container position-relative">
+        <div class="row align-items-center justify-content-center text-center min-vh-50">
+            <div class="col-lg-8 col-md-10">
+                <div class="text-white py-5">
+                    <h1 class="display-4 fw-bold mb-4 animate-fade-in">About WhatsApp Sender</h1>
+                    <p class="lead mb-5 animate-fade-in-delay">Empowering businesses to connect with their customers through seamless WhatsApp messaging solutions. We make communication simple, effective, and scalable.</p>
+                    <div class="d-flex justify-content-center gap-4 flex-wrap mb-4">
+                        <div class="d-flex align-items-center stats-item">
+                            <div class="square--60 bg-white bg-opacity-20 rounded-circle me-3 d-flex align-items-center justify-content-center">
+                                <i class="fa-solid fa-users text-white fs-4"></i>
+                            </div>
+                            <div class="text-start">
+                                <h5 class="text-white mb-0 fw-bold">10,000+</h5>
+                                <small class="text-white-75">Happy Clients</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center stats-item">
+                            <div class="square--60 bg-white bg-opacity-20 rounded-circle me-3 d-flex align-items-center justify-content-center">
+                                <i class="fa-solid fa-paper-plane text-white fs-4"></i>
+                            </div>
+                            <div class="text-start">
+                                <h5 class="text-white mb-0 fw-bold">1M+</h5>
+                                <small class="text-white-75">Messages Sent</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center stats-item">
+                            <div class="square--60 bg-white bg-opacity-20 rounded-circle me-3 d-flex align-items-center justify-content-center">
+                                <i class="fa-solid fa-clock text-white fs-4"></i>
+                            </div>
+                            <div class="text-start">
+                                <h5 class="text-white mb-0 fw-bold">24/7</h5>
+                                <small class="text-white-75">Support</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <a routerLink="/create-account" class="btn btn-light btn-lg px-4 py-3 me-3 hero-cta-btn">
+                            <i class="fa-solid fa-rocket me-2"></i>Get Started Free
+                        </a>
+                        <a routerLink="/contact" class="btn btn-outline-light btn-lg px-4 py-3 hero-cta-btn">
+                            <i class="fa-solid fa-phone me-2"></i>Contact Us
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+    <!-- Decorative Elements -->
+    <div class="hero-decoration hero-decoration-1">
+        <i class="fa-brands fa-whatsapp"></i>
+    </div>
+    <div class="hero-decoration hero-decoration-2">
+        <i class="fa-solid fa-message"></i>
+    </div>
+    <div class="hero-decoration hero-decoration-3">
+        <i class="fa-solid fa-users"></i>
+    </div>
+</section>
 
-<section>
+<!-- Our Story Section -->
+<section class="py-5">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6 col-md-6">
-                <div class="story-wrap explore-content">
-                    <h2>Our Story</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.</p>
+            <div class="col-lg-6 col-md-12 mb-4 mb-lg-0">
+                <div class="position-relative">
+                    <div class="bg-primary bg-opacity-10 rounded-4 p-4">
+                        <div class="bg-gradient rounded-3 shadow p-5 text-center" style="background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);">
+                            <div class="row align-items-center">
+                                <div class="col-md-6 mb-4 mb-md-0">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="position-relative">
+                                            <div class="square--120 bg-white rounded-circle d-flex align-items-center justify-content-center shadow-lg">
+                                                <i class="fa-brands fa-whatsapp text-success" style="font-size: 4rem;"></i>
+                                            </div>
+                                            <div class="position-absolute top-0 end-0">
+                                                <div class="square--40 bg-primary rounded-circle d-flex align-items-center justify-content-center">
+                                                    <i class="fa-solid fa-check text-white"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="text-white">
+                                        <h4 class="fw-bold mb-3">WhatsApp Business API</h4>
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="fa-solid fa-paper-plane me-2"></i>
+                                            <span>Instant Message Delivery</span>
+                                        </div>
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="fa-solid fa-users me-2"></i>
+                                            <span>Group Management</span>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fa-solid fa-chart-bar me-2"></i>
+                                            <span>Analytics & Reports</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="position-absolute top-0 start-0 translate-middle">
+                        <div class="square--80 bg-success rounded-circle d-flex align-items-center justify-content-center shadow">
+                            <i class="fa-solid fa-rocket text-white fs-2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-12">
+                <div class="ps-lg-4">
+                    <span class="text-primary fw-medium">Our Story</span>
+                    <h2 class="display-6 fw-bold mb-4">Revolutionizing Business Communication</h2>
+                    <p class="text-muted mb-4">
+                        Founded in 2023, WhatsApp Sender was born from a simple idea: businesses should be able to communicate 
+                        with their customers as easily as friends chat with each other. We recognized that WhatsApp had become 
+                        the world's most popular messaging platform, but businesses struggled to leverage its power effectively.
+                    </p>
+                    <p class="text-muted mb-4">
+                        Our platform bridges this gap by providing enterprise-grade WhatsApp messaging solutions that are 
+                        both powerful and user-friendly. From small startups to large corporations, we help businesses 
+                        build meaningful connections with their customers through personalized, timely, and relevant messaging.
+                    </p>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fa-solid fa-check-circle text-success me-2"></i>
+                                <span class="fw-medium">API Integration</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fa-solid fa-check-circle text-success me-2"></i>
+                                <span class="fw-medium">Bulk Messaging</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fa-solid fa-check-circle text-success me-2"></i>
+                                <span class="fw-medium">Group Management</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fa-solid fa-check-circle text-success me-2"></i>
+                                <span class="fw-medium">Analytics & Reports</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="gray-bg">
+<!-- Platform Preview Section -->
+<section class="py-5 bg-light">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-12 col-md-12">
-                <div class="sec-heading center">
-                    <h2>Meet Our Team</h2>
-                    <p>Professional & Dedicated Team</p>
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+                <h2 class="display-6 fw-bold mb-3">See Our Platform in Action</h2>
+                <p class="text-muted">Experience the power of professional WhatsApp messaging with our intuitive dashboard</p>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="position-relative">
+                    <div class="bg-white rounded-4 shadow-lg p-4">
+                        <!-- Mock Dashboard -->
+                        <div class="row g-0">
+                            <div class="col-md-3 border-end">
+                                <div class="p-3">
+                                    <h6 class="fw-bold text-primary mb-3">
+                                        <i class="fa-brands fa-whatsapp me-2"></i>Contacts
+                                    </h6>
+                                    <div class="d-flex align-items-center mb-3 p-2 bg-light rounded">
+                                        <div class="square--40 bg-success rounded-circle me-3 d-flex align-items-center justify-content-center">
+                                            <i class="fa-solid fa-user text-white"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-medium">John Doe</div>
+                                            <small class="text-muted">+1 234 567 8900</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-3 p-2 rounded">
+                                        <div class="square--40 bg-primary rounded-circle me-3 d-flex align-items-center justify-content-center">
+                                            <i class="fa-solid fa-user text-white"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-medium">Jane Smith</div>
+                                            <small class="text-muted">+1 234 567 8901</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 border-end">
+                                <div class="p-3">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <h6 class="fw-bold mb-0">
+                                            <i class="fa-solid fa-comments me-2 text-success"></i>Messages
+                                        </h6>
+                                        <span class="badge bg-success">Online</span>
+                                    </div>
+                                    <div class="chat-messages" style="height: 200px; overflow-y: auto;">
+                                        <div class="d-flex mb-3">
+                                            <div class="bg-light rounded-3 p-2 me-auto" style="max-width: 70%;">
+                                                <small class="text-muted">You</small>
+                                                <div>Hello! Welcome to our service. How can we help you today?</div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-3">
+                                            <div class="bg-primary text-white rounded-3 p-2 ms-auto" style="max-width: 70%;">
+                                                <small class="text-white-50">Customer</small>
+                                                <div>Hi! I'm interested in your WhatsApp messaging solutions.</div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex mb-3">
+                                            <div class="bg-light rounded-3 p-2 me-auto" style="max-width: 70%;">
+                                                <small class="text-muted">You</small>
+                                                <div>Great! Let me show you our features...</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="p-3">
+                                    <h6 class="fw-bold text-primary mb-3">
+                                        <i class="fa-solid fa-chart-bar me-2"></i>Analytics
+                                    </h6>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <small>Messages Sent</small>
+                                            <small class="fw-bold text-success">1,234</small>
+                                        </div>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar bg-success" style="width: 85%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <small>Delivered</small>
+                                            <small class="fw-bold text-primary">98.5%</small>
+                                        </div>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar bg-primary" style="width: 98%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <small>Read Rate</small>
+                                            <small class="fw-bold text-warning">76%</small>
+                                        </div>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar bg-warning" style="width: 76%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Floating Elements -->
+                    <div class="position-absolute top-0 start-0 translate-middle">
+                        <div class="square--60 bg-success rounded-circle d-flex align-items-center justify-content-center shadow">
+                            <i class="fa-solid fa-bolt text-white"></i>
+                        </div>
+                    </div>
+                    <div class="position-absolute top-0 end-0 translate-middle">
+                        <div class="square--50 bg-primary rounded-circle d-flex align-items-center justify-content-center shadow">
+                            <i class="fa-solid fa-shield text-white"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        
+    </div>
+</section>
+
+<!-- Mission & Vision Section -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+                <h2 class="display-6 fw-bold mb-3">Our Mission & Vision</h2>
+                <p class="text-muted">Driving the future of business communication through innovation and excellence</p>
+            </div>
+        </div>
         <div class="row g-4">
-            <div *ngFor="let item of teamData" class="col-lg-4 col-md-6 col-sm-12">
-                <div class="single-team">
-                    <div class="team-grid card border-0 shadow-sm h-100">
-                        <div class="teamgrid-user text-center p-4">
-                            <img [src]="item.image" alt="{{item.name}}" class="img-fluid rounded-circle" style="width: 120px; height: 120px; object-fit: cover;" />
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100 p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="square--60 bg-primary bg-opacity-10 rounded-circle me-3">
+                            <i class="fa-solid fa-bullseye text-primary"></i>
                         </div>
-                        <div class="teamgrid-content text-center pb-3">
-                            <h4 class="mb-1">{{item.name}}</h4>
-                            <span class="text-muted">{{item.position}}</span>
-                        </div>
-                        <div class="teamgrid-social text-center pb-4">
-                            <ul class="list-inline mb-0">
-                                <li class="list-inline-item"><a href="#" class="f-cl btn btn-sm btn-outline-primary rounded-circle"><i class="fa-brands fa-facebook"></i></a></li>
-                                <li class="list-inline-item"><a href="#" class="t-cl btn btn-sm btn-outline-info rounded-circle"><i class="fa-brands fa-twitter"></i></a></li>
-                                <li class="list-inline-item"><a href="#" class="i-cl btn btn-sm btn-outline-danger rounded-circle"><i class="fa-brands fa-instagram"></i></a></li>
-                                <li class="list-inline-item"><a href="#" class="l-cl btn btn-sm btn-outline-primary rounded-circle"><i class="fa-brands fa-linkedin"></i></a></li>
-                            </ul>
-                        </div>
+                        <h4 class="fw-bold mb-0">Our Mission</h4>
                     </div>
+                    <p class="text-muted mb-0">
+                        To democratize business communication by making WhatsApp messaging accessible, affordable, 
+                        and effective for businesses of all sizes. We strive to eliminate communication barriers 
+                        and help businesses build stronger relationships with their customers through the power of 
+                        instant messaging.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm h-100 p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="square--60 bg-success bg-opacity-10 rounded-circle me-3">
+                            <i class="fa-solid fa-eye text-success"></i>
+                        </div>
+                        <h4 class="fw-bold mb-0">Our Vision</h4>
+                    </div>
+                    <p class="text-muted mb-0">
+                        To become the world's leading WhatsApp business messaging platform, enabling millions of 
+                        businesses to connect, engage, and grow through meaningful conversations. We envision a 
+                        future where every business interaction is personal, timely, and valuable.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section>
+<!-- Why Choose Us Section -->
+<section class="py-5">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-12 col-md-12">
-                <div class="sec-heading center">
-                    <h2>Our Mission & Work Process</h2>
-                    <p>Professional & Dedicated Team</p>
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+                <h2 class="display-6 fw-bold mb-3">Why Choose WhatsApp Sender?</h2>
+                <p class="text-muted">We provide comprehensive WhatsApp business solutions that drive results</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div *ngFor="let item of aboutData" class="col-lg-4 col-md-6">
+                <div class="text-center p-4 h-100 feature-card">
+                    <div class="position-relative mb-4">
+                        <div class="square--100 bg-light rounded-circle mx-auto d-flex align-items-center justify-content-center position-relative overflow-hidden">
+                            <div class="position-absolute w-100 h-100 bg-gradient" style="background: linear-gradient(45deg, rgba(7,77,163,0.1) 0%, rgba(0,169,79,0.1) 100%);"></div>
+                            <i [ngClass]="item.icon" class="fs-1 position-relative"></i>
+                        </div>
+                        <div class="position-absolute top-0 end-0 translate-middle">
+                            <div class="square--30 bg-success rounded-circle d-flex align-items-center justify-content-center">
+                                <i class="fa-solid fa-check text-white fs-6"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <h5 class="fw-bold mb-3">{{item.title}}</h5>
+                    <p class="text-muted mb-0">{{item.desc}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="py-5 position-relative overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="position-absolute top-0 start-0 w-100 h-100 opacity-50">
+        <div class="bg-dot primary" style="background-size: 20px 20px;"></div>
+    </div>
+    
+    <div class="container position-relative">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+                <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill mb-3">
+                    <i class="fa-solid fa-users me-2"></i>Our Team
+                </span>
+                <h2 class="display-5 fw-bold mb-3">Meet the Minds Behind Innovation</h2>
+                <p class="text-muted lead">Passionate professionals dedicated to revolutionizing business communication through cutting-edge WhatsApp solutions</p>
+            </div>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            <div *ngFor="let member of teamData; let i = index" class="col-lg-4 col-md-6">
+                <div class="team-card position-relative">
+                    <!-- Main Card -->
+                    <div class="card border-0 shadow-lg h-100 team-member-card">
+                        <div class="card-body text-center p-4 position-relative">
+                            <!-- Background Gradient -->
+                            <div class="position-absolute top-0 start-0 w-100 h-25 bg-gradient rounded-top" 
+                                 [style.background]="'linear-gradient(135deg, ' + (i % 2 === 0 ? '#074da3' : '#00a94f') + ' 0%, ' + (i % 2 === 0 ? '#00a94f' : '#074da3') + ' 100%)'"></div>
+                            
+                            <!-- Profile Image -->
+                            <div class="position-relative mb-4 mt-3">
+                                <div class="team-image-wrapper mx-auto">
+                                    <img [src]="member.image" [alt]="member.name" 
+                                         class="team-image rounded-circle shadow-lg">
+                                    <div class="team-image-overlay rounded-circle">
+                                        <div class="team-image-content">
+                                            <i class="fa-solid fa-quote-left text-white fs-4"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Status Badge -->
+                                <div class="position-absolute bottom-0 end-0 translate-middle">
+                                    <div class="status-badge bg-success border border-white border-3 rounded-circle">
+                                        <i class="fa-solid fa-check text-white"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Member Info -->
+                            <div class="member-info">
+                                <h5 class="fw-bold mb-1 text-dark">{{member.name}}</h5>
+                                <p class="text-primary fw-medium mb-3">{{member.position}}</p>
+                                <p class="text-muted small mb-4">{{member.bio}}</p>
+                                
+                                <!-- Skills -->
+                                <div class="skills mb-4">
+                                    <div class="d-flex flex-wrap justify-content-center gap-1">
+                                        <span *ngFor="let skill of member.skills" 
+                                              class="badge bg-light text-dark border">{{skill}}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Social Links -->
+                                <div class="social-links">
+                                    <a href="#" class="btn btn-sm btn-outline-primary rounded-circle me-2 social-btn">
+                                        <i class="fa-brands fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-outline-info rounded-circle me-2 social-btn">
+                                        <i class="fa-brands fa-twitter"></i>
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-outline-dark rounded-circle social-btn">
+                                        <i class="fa-solid fa-envelope"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Hover Quote -->
+                        <div class="team-quote position-absolute w-100 h-100 top-0 start-0 d-flex align-items-center justify-content-center">
+                            <div class="text-center text-white p-4">
+                                <i class="fa-solid fa-quote-left fs-2 mb-3 opacity-75"></i>
+                                <p class="fw-medium mb-3">{{member.quote}}</p>
+                                <small class="opacity-75">- {{member.name}}</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Floating Elements -->
+                    <div class="floating-element floating-element-1">
+                        <i class="fa-solid fa-star text-warning"></i>
+                    </div>
+                    <div class="floating-element floating-element-2">
+                        <i class="fa-solid fa-heart text-danger"></i>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <div class="row align-items-center">
-            <div class="col-lg-6 col-md-6">
-                <div *ngFor="let item of aboutData" class="icon-mi-left">
-                    <i [ngClass]="item.icon"></i>
-                    <div class="icon-mi-left-content">
-                        <h4>{{item.title}}</h4>
-                        <p>{{item.desc}}</p>
+        <!-- Team Stats -->
+        <div class="row mt-5 pt-5">
+            <div class="col-lg-12">
+                <div class="team-stats bg-white rounded-4 shadow-sm p-4">
+                    <div class="row text-center">
+                        <div class="col-md-3 col-6 mb-3 mb-md-0">
+                            <div class="stat-item">
+                                <div class="stat-icon mb-2">
+                                    <i class="fa-solid fa-users text-primary fs-2"></i>
+                                </div>
+                                <h4 class="fw-bold text-primary mb-1">50+</h4>
+                                <p class="text-muted mb-0">Team Members</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3 mb-md-0">
+                            <div class="stat-item">
+                                <div class="stat-icon mb-2">
+                                    <i class="fa-solid fa-trophy text-warning fs-2"></i>
+                                </div>
+                                <h4 class="fw-bold text-warning mb-1">15+</h4>
+                                <p class="text-muted mb-0">Years Experience</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="stat-item">
+                                <div class="stat-icon mb-2">
+                                    <i class="fa-solid fa-globe text-success fs-2"></i>
+                                </div>
+                                <h4 class="fw-bold text-success mb-1">25+</h4>
+                                <p class="text-muted mb-0">Countries Served</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="stat-item">
+                                <div class="stat-icon mb-2">
+                                    <i class="fa-solid fa-rocket text-info fs-2"></i>
+                                </div>
+                                <h4 class="fw-bold text-info mb-1">100+</h4>
+                                <p class="text-muted mb-0">Projects Delivered</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -86,5 +502,21 @@
     </div>
 </section>
 
+<!-- CTA Section -->
+<section class="bg-primary py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 col-md-12 text-center text-lg-start mb-4 mb-lg-0">
+                <h3 class="text-white fw-bold mb-2">Ready to Transform Your Business Communication?</h3>
+                <p class="text-white-50 mb-0">Join thousands of businesses already using WhatsApp Sender to connect with their customers.</p>
+            </div>
+            <div class="col-lg-4 col-md-12 text-center text-lg-end">
+                <a routerLink="/create-account" class="btn btn-light btn-lg fw-medium px-4">
+                    Get Started Today <i class="fa-solid fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
 
 <app-footer/>

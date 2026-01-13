@@ -6,7 +6,7 @@ import { jsPDF } from 'jspdf';
 import { environment } from '../../../environments/environment';
 
 @Component({
-  selector: 'app-api-instructions',
+  selector: 'app-documentation',
   standalone: true,
   imports: [
     CommonModule,
@@ -19,47 +19,286 @@ import { environment } from '../../../environments/environment';
 export class ApiInstructionsComponent {
 
   copySuccess = false;
+  activeSection = 'getting-started';
 
-  code1 = `
-    [
-        "Hello! Your code is {code}.",
-        "Hi! Use this code: {code}.",
-        "Greetings! Your code is {code}."
-    ]`
-    ;
+  // Documentation sections
+  sections = [
+    { id: 'getting-started', title: 'Getting Started', icon: 'fa-rocket' },
+    { id: 'authentication', title: 'Authentication', icon: 'fa-key' },
+    { id: 'api-reference', title: 'API Reference', icon: 'fa-code' },
+    { id: 'examples', title: 'Code Examples', icon: 'fa-file-code' },
+    { id: 'webhooks', title: 'Webhooks', icon: 'fa-webhook' },
+    { id: 'rate-limits', title: 'Rate Limits', icon: 'fa-tachometer-alt' },
+    { id: 'errors', title: 'Error Handling', icon: 'fa-exclamation-triangle' },
+    { id: 'sdks', title: 'SDKs & Libraries', icon: 'fa-download' }
+  ];
 
-  code2 = `curl -X POST ${environment.apiUrl}/external/messages/send 
-    -H "X-API-Token: 550e8400-e29b-41d4-a716-446655440000" 
-    -H "Content-Type: application/json" 
-    -d '{
-        "phone": "+201234567890",
-        "message": "Your verification code is 123456"
-        }'`
-    ;
-
-  code3 = `
+  // API endpoints
+  endpoints = [
     {
-        "success": false, 
-        "error": "Phone and message are required"
-    }`;
+      method: 'POST',
+      path: '/api/auth/login',
+      title: 'User Login',
+      description: 'Authenticate user and get JWT token',
+      request: {
+        email: 'user@example.com',
+        password: 'password123'
+      },
+      response: {
+        success: true,
+        message: 'Login successful',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+        user: {
+          id: '507f1f77bcf86cd799439011',
+          email: 'user@example.com',
+          name: 'John Doe'
+        }
+      }
+    },
+    {
+      method: 'POST',
+      path: '/api/tokens/generate',
+      title: 'Generate API Token',
+      description: 'Create a new API token for external integrations',
+      headers: {
+        'Authorization': 'Bearer <jwt_token>',
+        'Content-Type': 'application/json'
+      },
+      request: {
+        name: 'My Integration Token',
+        permissions: ['send_messages', 'read_contacts']
+      },
+      response: {
+        success: true,
+        message: 'API token generated successfully',
+        token: '550e8400-e29b-41d4-a716-446655440000',
+        id: '507f1f77bcf86cd799439011'
+      }
+    },
+    {
+      method: 'POST',
+      path: '/api/external/messages/send',
+      title: 'Send WhatsApp Message',
+      description: 'Send a WhatsApp message to a phone number',
+      headers: {
+        'X-API-Token': '550e8400-e29b-41d4-a716-446655440000',
+        'Content-Type': 'application/json'
+      },
+      request: {
+        phone: '+201234567890',
+        message: 'Hello! Your verification code is 123456.'
+      },
+      response: {
+        success: true,
+        message: 'Message sent successfully',
+        messageId: 'msg_507f1f77bcf86cd799439011',
+        status: 'sent'
+      }
+    },
+    {
+      method: 'POST',
+      path: '/api/external/messages/bulk',
+      title: 'Send Bulk Messages',
+      description: 'Send WhatsApp messages to multiple recipients',
+      headers: {
+        'X-API-Token': '550e8400-e29b-41d4-a716-446655440000',
+        'Content-Type': 'application/json'
+      },
+      request: {
+        messages: [
+          { phone: '+201234567890', message: 'Hello John!' },
+          { phone: '+201234567891', message: 'Hello Jane!' }
+        ]
+      },
+      response: {
+        success: true,
+        message: 'Bulk messages queued successfully',
+        results: [
+          { phone: '+201234567890', status: 'queued', messageId: 'msg_1' },
+          { phone: '+201234567891', status: 'queued', messageId: 'msg_2' }
+        ]
+      }
+    },
+    {
+      method: 'GET',
+      path: '/api/contacts',
+      title: 'Get Contacts',
+      description: 'Retrieve your WhatsApp contacts',
+      headers: {
+        'Authorization': 'Bearer <jwt_token>'
+      },
+      response: {
+        success: true,
+        contacts: [
+          { id: '1', name: 'John Doe', phone: '+201234567890', lastSeen: '2024-01-13T10:30:00Z' },
+          { id: '2', name: 'Jane Smith', phone: '+201234567891', lastSeen: '2024-01-13T09:15:00Z' }
+        ],
+        total: 2
+      }
+    }
+  ];
 
+  // Code examples in different languages
+  codeExamples = {
+    javascript: `// Install: npm install axios
+const axios = require('axios');
 
-  copyCurlExample() {
-    const curlExample = `
-curl -X POST ${environment.apiUrl}/external/messages/send 
--H "X-API-Token: 550e8400-e29b-41d4-a716-446655440000" 
--H "Content-Type: application/json" 
--d '{
-  "phone": "+201234567890",
-  "message": "Your verification code is 123456"
-}'`.trim();
-    navigator.clipboard.writeText(curlExample).then(() => {
+const sendMessage = async (phone, message) => {
+  try {
+    const response = await axios.post('${environment.apiUrl}/external/messages/send', {
+      phone: phone,
+      message: message
+    }, {
+      headers: {
+        'X-API-Token': 'your-api-token-here',
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    console.log('Message sent:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// Usage
+sendMessage('+201234567890', 'Hello from Node.js!');`,
+
+    python: `# Install: pip install requests
+import requests
+import json
+
+def send_message(phone, message):
+    url = '${environment.apiUrl}/external/messages/send'
+    headers = {
+        'X-API-Token': 'your-api-token-here',
+        'Content-Type': 'application/json'
+    }
+    data = {
+        'phone': phone,
+        'message': message
+    }
+    
+    try:
+        response = requests.post(url, headers=headers, json=data)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f'Error: {e}')
+        raise
+
+# Usage
+result = send_message('+201234567890', 'Hello from Python!')
+print(result)`,
+
+    php: `<?php
+// Send WhatsApp Message using PHP
+function sendMessage($phone, $message) {
+    $url = '${environment.apiUrl}/external/messages/send';
+    $headers = [
+        'X-API-Token: your-api-token-here',
+        'Content-Type: application/json'
+    ];
+    $data = json_encode([
+        'phone' => $phone,
+        'message' => $message
+    ]);
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode === 200) {
+        return json_decode($response, true);
+    } else {
+        throw new Exception("HTTP Error: $httpCode - $response");
+    }
+}
+
+// Usage
+try {
+    $result = sendMessage('+201234567890', 'Hello from PHP!');
+    echo json_encode($result, JSON_PRETTY_PRINT);
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+?>`,
+
+    curl: `# Send a single message
+curl -X POST ${environment.apiUrl}/external/messages/send \\
+  -H "X-API-Token: your-api-token-here" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "phone": "+201234567890",
+    "message": "Hello from cURL!"
+  }'
+
+# Send bulk messages
+curl -X POST ${environment.apiUrl}/external/messages/bulk \\
+  -H "X-API-Token: your-api-token-here" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "messages": [
+      {"phone": "+201234567890", "message": "Hello John!"},
+      {"phone": "+201234567891", "message": "Hello Jane!"}
+    ]
+  }'`
+  };
+
+  // Error codes
+  errorCodes = [
+    { code: 400, title: 'Bad Request', description: 'Invalid request format or missing required fields' },
+    { code: 401, title: 'Unauthorized', description: 'Invalid or missing API token/JWT' },
+    { code: 403, title: 'Forbidden', description: 'Insufficient permissions for this operation' },
+    { code: 404, title: 'Not Found', description: 'Requested resource not found' },
+    { code: 429, title: 'Too Many Requests', description: 'Rate limit exceeded. Wait before making more requests' },
+    { code: 500, title: 'Internal Server Error', description: 'Server error. Contact support if this persists' }
+  ];
+
+  // Error response example
+  errorResponseExample = `{
+  "success": false,
+  "error": "Invalid phone number format",
+  "code": "INVALID_PHONE",
+  "details": {
+    "field": "phone",
+    "message": "Phone number must include country code"
+  }
+}`;
+
+  // Rate limit headers example
+  rateLimitHeaders = `X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1642089600`;
+
+  setActiveSection(sectionId: string) {
+    this.activeSection = sectionId;
+    // Smooth scroll to section with offset for navbar
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const yOffset = -100; // Offset for navbar height
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }
+
+  copyToClipboard(text: string) {
+    navigator.clipboard.writeText(text).then(() => {
       this.copySuccess = true;
+      setTimeout(() => this.copySuccess = false, 2000);
     }).catch(() => {
       this.copySuccess = false;
     });
   }
-
 
   downloadApiDocs() {
     const doc = new jsPDF();
@@ -191,6 +430,14 @@ curl -X POST ${environment.apiUrl}/external/messages/send
     });
 
     doc.save("WhatsAPI-Docs.pdf");
+  }
+
+  getBaseUrl(): string {
+    return environment.apiUrl || 'https://api.whatsapp-sender.com';
+  }
+
+  formatJson(obj: any): string {
+    return JSON.stringify(obj, null, 2);
   }
 
 }
