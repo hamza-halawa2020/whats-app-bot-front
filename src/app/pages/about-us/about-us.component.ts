@@ -3,8 +3,6 @@ import { Component } from '@angular/core';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { FooterComponent } from "../../components/footer/footer.component";
 
-declare var $: any;
-
 @Component({
   selector: 'app-about-us',
   imports: [
@@ -18,77 +16,39 @@ declare var $: any;
 export class AboutUsComponent {
   teamData = [
     {
-      image:'assets/img/team-1.jpg',
+      image:'',
       name:'Shaurya Preet',
       position:'Co-Founder'
     },
     {
-      image:'assets/img/team-2.jpg',
+      image:'',
       name:'Dhananjay Preet',
       position:'CEO'
     },
     {
-      image:'assets/img/team-3.jpg',
+      image:'',
       name:'Rahul Gilkrist',
       position:'Manager'
     },
     {
-      image:'assets/img/team-4.jpg',
+      image:'',
       name:'Adam Wilcard',
       position:'Agent'
     },
     {
-      image:'assets/img/team-5.jpg',
+      image:'',
       name:'Rahul Gilkrist',
       position:'Agent'
     },
     {
-      image:'assets/img/team-6.jpg',
+      image:'',
       name:'Adam Wilcard',
       position:'Agent'
     },
   ]
 
-  private initialized = false;
-
-  ngAfterViewChecked(): void {
-    if (!this.initialized) {
-      this.initialized = true;
-      setTimeout(() => {
-        $('.team-slide').slick({
-          slidesToShow:4,
-          arrows: false,
-          dots: true,
-          autoplay:true,
-          autoplaySpeed: 2000,
-          responsive: [
-            {
-              breakpoint: 1023,
-              settings: {
-              arrows: false,
-              dots:true,
-              slidesToShow:3
-              }
-            },
-            {
-              breakpoint: 768,
-              settings: {
-              arrows: false,
-              slidesToShow:2
-              }
-            },
-            {
-              breakpoint: 480,
-              settings: {
-              arrows: false,
-              slidesToShow:1
-              }
-            }
-            ]
-        });
-      });
-    }
-  }
+  // Removed slick carousel initialization to fix the error
+  // The component will now display team members in a responsive grid layout
 
   aboutData = [
     {
