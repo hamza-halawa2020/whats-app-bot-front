@@ -116,7 +116,7 @@ export class AuthService {
     this.cookieService.set(this.tokenKey, token, {
       expires: 7,
       path: '/',
-      secure: true,
+      secure: window.location.protocol === 'https:',
       sameSite: 'Strict',
     });
   }
@@ -125,7 +125,7 @@ export class AuthService {
     this.cookieService.set(this.userKey, JSON.stringify(user), {
       expires: 7,
       path: '/',
-      secure: true,
+      secure: window.location.protocol === 'https:',
       sameSite: 'Strict',
     });
   }

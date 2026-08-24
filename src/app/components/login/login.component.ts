@@ -104,7 +104,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.router.navigate(['/clients']);
       },
       error: (error) => {
-        this.loginError = error.error?.message || 'Invalid email or password';
+        this.loginError = error.error?.error || 'Invalid email or password';
         console.error('Login error:', error);
         this.isSubmitting = false;
       },

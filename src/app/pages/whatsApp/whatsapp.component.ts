@@ -139,7 +139,7 @@ export class WhatsAppComponent implements OnInit, OnDestroy {
         (response) => {
           this.qrCode = response.qrCode;
           this.sessionStatus = response.status || 'starting';
-          if (this.sessionStatus === 'connected') {
+          if (this.sessionStatus === 'ready') {
             this.successMessage = 'WhatsApp session is now active!';
             this.stopPolling();
           }

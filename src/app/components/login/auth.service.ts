@@ -49,13 +49,13 @@ export class AuthService implements IAuthService {
             this.cookieService.set('currentUser', JSON.stringify(response.user), {
               expires: 7,
               path: '/',
-              secure: true,
+              secure: window.location.protocol === 'https:',
               sameSite: 'Strict',
             });
             this.cookieService.set('token', response.token, {
               expires: 7,
               path: '/',
-              secure: true,
+              secure: window.location.protocol === 'https:',
               sameSite: 'Strict',
             });
             this.currentUserSubject.next(response.user);
@@ -89,13 +89,13 @@ export class AuthService implements IAuthService {
             this.cookieService.set('currentUser', JSON.stringify(response.user), {
               expires: 7,
               path: '/',
-              secure: true,
+              secure: window.location.protocol === 'https:',
               sameSite: 'Strict',
             });
             this.cookieService.set('token', response.token, {
               expires: 7,
               path: '/',
-              secure: true,
+              secure: window.location.protocol === 'https:',
               sameSite: 'Strict',
             });
             this.currentUserSubject.next(response.user);

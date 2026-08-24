@@ -82,7 +82,7 @@ export class CreateAccountComponent implements OnInit {
         this.loginForm.patchValue({ phone });
       }
     } catch (error: any) {
-      this.signupError = error.error?.message || 'Failed to create account';
+      this.signupError = error.error?.error || 'Failed to create account';
       console.error('Signup error:', error);
     } finally {
       this.isSubmitting = false;
@@ -111,7 +111,7 @@ export class CreateAccountComponent implements OnInit {
         this.router.navigate(['/']);
       }
     } catch (error: any) {
-      this.loginError = error.error?.message || 'Failed to login';
+      this.loginError = error.error?.error || 'Failed to login';
       console.error('Login error:', error);
     } finally {
       this.isSubmitting = false;

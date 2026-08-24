@@ -4,9 +4,12 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 interface ApiResponse {
-  _id?: string;
+  id?: string;
   phone?: string;
   addedBy?: string;
+  name?: string;
+  tags?: string[];
+  segment?: string;
   createdAt?: string;
 }
 
@@ -25,15 +28,13 @@ export class ClientsService {
   }
 
 
-  createClient(client: {
-    phone: string;
-  }): Observable<ApiResponse> {
+  createClient(client: { phone: string; name?: string; tags?: string[]; segment?: string }): Observable<ApiResponse> {
     return this.http.post<ApiResponse>(`${this.apiUrl}${this.data}`, client);
   }
 
   updateClient(
     id: string,
-    client: { phone: string }
+    client: { phone: string; name?: string; tags?: string[]; segment?: string }
   ): Observable<ApiResponse> {
     return this.http.put<ApiResponse>(
       `${this.apiUrl}${this.data}/${id}`,

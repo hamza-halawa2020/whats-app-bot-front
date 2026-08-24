@@ -30,7 +30,7 @@
               WhatsApp Session Status:
               <span
                 [ngClass]="{
-                  'text-success': sessionStatus === 'connected',
+                  'text-success': sessionStatus === 'ready',
                   'text-warning': sessionStatus === 'starting',
                   'text-danger': !sessionStatus
                 }"
@@ -45,14 +45,14 @@
             </h4>
             <!-- QR Code Display -->
             <div
-              *ngIf="qrCode && sessionStatus !== 'connected'"
+              *ngIf="qrCode && sessionStatus !== 'ready'"
               class="qr-code-container text-center"
             >
               <p>Scan the QR code to start your WhatsApp session:</p>
               <app-qr-code [value]="qrCode" class="qr-code"></app-qr-code>
             </div>
             <!-- Session Active Indicator -->
-            <div *ngIf="sessionStatus === 'connected'" class="text-center">
+            <div *ngIf="sessionStatus === 'ready'" class="text-center">
               <span class="badge bg-success fs-5">
                 <i class="bi bi-check-circle-fill me-2"></i>Session Active
               </span>
@@ -68,7 +68,7 @@
             <button
               class="btn btn-primary"
               (click)="startWhatsApp()"
-              [disabled]="sessionStatus === 'connected' || loading"
+              [disabled]="sessionStatus === 'ready' || loading"
             >
               Start WhatsApp
             </button>

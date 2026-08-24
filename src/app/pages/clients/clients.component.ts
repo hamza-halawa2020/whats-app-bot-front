@@ -8,7 +8,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { COUNTRY_CODES, CountryCode } from './country-codes';
 
 interface ClientData {
-  _id: string;
+  id: string;
   phone: string;
   addedBy: string;
   createdAt: string;
@@ -113,13 +113,13 @@ export class ClientsComponent implements OnInit {
       },
       (error) => {
         console.error('Error creating client:', error);
-        this.errorMessage = error.error?.message || 'Failed to create client';
+        this.errorMessage = error.error?.error || 'Failed to create client';
       }
     );
   }
 
   openUpdateModal(client: ClientData): void {
-    this.selectedClientId = client._id;
+    this.selectedClientId = client.id;
     // Split phone into countryCode and phone
     const phone = client.phone;
     const countryCode = this.countryCodes.find(code => phone.startsWith(code.code))?.code || '+20';
@@ -140,7 +140,7 @@ export class ClientsComponent implements OnInit {
     const fullPhone = `${countryCode}${phone}`;
     this.clientsService.updateClient(this.selectedClientId, { phone: fullPhone }).subscribe(
       (updatedClient) => {
-        const index = this.clientData.findIndex((c) => c._id === this.selectedClientId);
+        const index = this.clientData.findIndex((c) => c.id === this.selectedClientId);
         if (index !== -1) {
           this.clientData[index] = { ...this.clientData[index], ...updatedClient };
         }
@@ -156,7 +156,7 @@ export class ClientsComponent implements OnInit {
       },
       (error) => {
         console.error('Error updating client:', error);
-        this.errorMessage = error.error?.message || 'Failed to update client';
+        this.errorMessage = error.error?.error || 'Failed to update client';
       }
     );
   }
@@ -170,7 +170,7 @@ export class ClientsComponent implements OnInit {
 
     this.clientsService.deleteClient(this.selectedClientId).subscribe(
       () => {
-        this.clientData = this.clientData.filter((c) => c._id !== this.selectedClientId);
+        this.clientData = this.clientData.filter((c) => c.id !== this.selectedClientId);
         this.selectedClientId = null;
         this.errorMessage = null;
         const modal = document.getElementById('deleteClientModal');
@@ -182,7 +182,7 @@ export class ClientsComponent implements OnInit {
       },
       (error) => {
         console.error('Error deleting client:', error);
-        this.errorMessage = error.error?.message || 'Failed to delete client';
+        this.errorMessage = error.error?.error || 'Failed to delete client';
       }
     );
   }

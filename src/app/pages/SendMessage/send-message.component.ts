@@ -13,14 +13,14 @@ import { FooterComponent } from '../../components/footer/footer.component';
 import { COUNTRY_CODES, CountryCode } from '../clients/country-codes';
 
 interface ClientData {
-  _id: string;
+  id: string;
   phone: string;
   addedBy: string;
   createdAt: string;
 }
 
 interface Schedule {
-  _id: string;
+  id: string;
   phoneNumbers: string[];
   messagePool: string[];
   intervalMs: number;
@@ -150,7 +150,7 @@ export class SendMessageComponent implements OnInit {
 
     this.sendMessageForm.get('clientId')?.valueChanges.subscribe((clientId) => {
       if (clientId) {
-        const client = this.clients.find((c) => c._id === clientId);
+        const client = this.clients.find((c) => String(c.id) === String(clientId));
         if (client) {
           const phone = client.phone;
           const countryCode =
@@ -189,7 +189,7 @@ export class SendMessageComponent implements OnInit {
     if (inputType === 'manual') {
       fullPhone = `${countryCode}${phone}`;
     } else {
-      const client = this.clients.find((c) => c._id === clientId);
+      const client = this.clients.find((c) => String(c.id) === String(clientId));
       fullPhone = client?.phone || '';
     }
 

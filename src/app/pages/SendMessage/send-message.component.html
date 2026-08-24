@@ -175,7 +175,7 @@
                     formControlName="clientId"
                   >
                     <option value="">-- Select a client --</option>
-                    <option *ngFor="let client of clients" [value]="client._id">
+                    <option *ngFor="let client of clients" [value]="client.id">
                       {{ client.phone }}
                     </option>
                   </select>
@@ -474,7 +474,7 @@
                   </thead>
                   <tbody>
                     <tr *ngFor="let schedule of schedules">
-                      <td>{{ schedule._id }}</td>
+                      <td>{{ schedule.id }}</td>
                       <td>{{ schedule.phoneNumbers.join(", ") }}</td>
                       <td>{{ schedule.messagePool.join(" | ") }}</td>
                       <td>{{ schedule.intervalMs / 1000 }} seconds</td>
@@ -493,14 +493,14 @@
                         <button
                           *ngIf="schedule.status === 'active'"
                           class="btn btn-warning btn-sm"
-                          (click)="toggleSchedule(schedule._id, 'pause')"
+                          (click)="toggleSchedule(schedule.id, 'pause')"
                         >
                           Pause
                         </button>
                         <button
                           *ngIf="schedule.status === 'paused'"
                           class="btn btn-success btn-sm"
-                          (click)="toggleSchedule(schedule._id, 'resume')"
+                          (click)="toggleSchedule(schedule.id, 'resume')"
                         >
                           Resume
                         </button>

@@ -4,8 +4,12 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 interface TokenData {
-  _id: string;
-  token: string;
+  id: string;
+  token?: string;
+  name?: string;
+  scopes?: string[];
+  expiresAt?: string;
+  lastUsedAt?: string;
   phone: string;
   createdAt: string;
 }

@@ -74,7 +74,7 @@ export class GroupsComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching participants:', error);
-        this.errorMessage = error.error?.message || 'Failed to fetch and save participants';
+        this.errorMessage = error.error?.error || 'Failed to fetch and save participants';
         this.loadingGroupId = null;
       },
       () => {

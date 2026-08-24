@@ -7,8 +7,12 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
 interface TokenData {
-  _id: string;
-  token: string;
+  id: string;
+  token?: string;
+  name?: string;
+  scopes?: string[];
+  expiresAt?: string;
+  lastUsedAt?: string;
   phone: string;
   createdAt: string;
 }
@@ -52,13 +56,13 @@ export class TokensComponent implements OnInit {
   generateApiToken(): void {
     this.http.post(`${environment.apiUrl}/tokens/generate`, {}).subscribe(
       (response: any) => {
-        this.successMessage = 'API token generated successfully!';
+        this.successMessage = response?.token ? `API token generated: ${response.token}` : 'API token generated successfully!';
         this.errorMessage = null;
         this.getTokens(); // Refresh token list
       },
       (error) => {
         console.error('Error generating API token:', error);
-        this.errorMessage = error.error?.message || 'Failed to generate API token';
+        this.errorMessage = error.error?.error || 'Failed to generate API token';
       }
     );
   }
@@ -72,7 +76,7 @@ export class TokensComponent implements OnInit {
       },
       (error) => {
         console.error('Error revoking token:', error);
-        this.errorMessage = error.error?.message || 'Failed to revoke token';
+        this.errorMessage = error.error?.error || 'Failed to revoke token';
       }
     );
   }

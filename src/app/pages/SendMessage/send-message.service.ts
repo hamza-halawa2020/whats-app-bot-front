@@ -19,11 +19,11 @@ interface BroadcastResponse {
   sentCount?: number;
   failedCount?: number;
   errors?: { phone: string; error: string }[];
-  scheduleId?: string; // Added for scheduled messages
+  scheduleId?: number | string;
 }
 
 interface Schedule {
-  _id: string;
+  id: string;
   phoneNumbers: string[];
   messagePool: string[];
   intervalMs: number;
@@ -141,7 +141,7 @@ export class SendMessageService {
     action: 'pause' | 'resume'
   ): Observable<ToggleScheduleResponse> {
     return this.http
-      .post<ToggleScheduleResponse>(`${this.apiUrl}/messages/toggle-schedule`, {
+      .post<ToggleScheduleResponse>(`${this.apiUrl}/messages/schedules/toggle`, {
         scheduleId,
         action,
       })
