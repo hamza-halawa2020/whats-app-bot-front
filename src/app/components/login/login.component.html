@@ -1,90 +1,70 @@
-<div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="registermodal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered login-pop-form" role="document">
-        <div class="modal-content" id="registermodal">
-            <div class="mod-close" data-bs-dismiss="modal" aria-hidden="true">
-                <span class="svg-icon text-primary svg-icon-2hx">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="10" fill="currentColor" />
-                        <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)"
-                            fill="currentColor" />
-                        <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)"
-                            fill="currentColor" />
-                    </svg>
-                </span>
-            </div>
+<div class="modal fade" id="login" tabindex="-1" aria-labelledby="loginTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered login-modal">
+        <div class="modal-content">
+            <button type="button" class="login-close" data-bs-dismiss="modal" aria-label="Close">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
             <div class="modal-body">
-                <h4 class="modal-header-title">Log In</h4>
-                <div class="d-flex align-items-center justify-content-center mb-3">
-                    <span class="svg-icon text-primary svg-icon-2hx">
-                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M15.8797 15.375C15.9797 15.075 15.9797 14.775 15.9797 14.475C15.9797 13.775 15.7797 13.075 15.4797 12.475C14.7797 11.275 13.4797 10.475 11.9797 10.475C11.7797 10.475 11.5797 10.475 11.3797 10.575C7.37971 11.075 4.67971 14.575 2.57971 18.075L10.8797 3.675C11.3797 2.775 12.5797 2.775 13.0797 3.675C13.1797 3.875 13.2797 3.975 13.3797 4.175C15.2797 7.575 16.9797 11.675 15.8797 15.375Z"
-                                fill="currentColor" />
-                            <path opacity="0.3"
-                                d="M20.6797 20.6749C16.7797 20.6749 12.3797 20.275 9.57972 17.575C10.2797 18.075 11.0797 18.375 11.9797 18.375C13.4797 18.375 14.7797 17.5749 15.4797 16.2749C15.6797 15.9749 15.7797 15.675 15.7797 15.375V15.2749C16.8797 11.5749 15.2797 7.47495 13.2797 4.07495L21.6797 18.6749C22.2797 19.5749 21.6797 20.6749 20.6797 20.6749ZM8.67972 18.6749C8.17972 17.8749 7.97972 16.975 7.77972 15.975C7.37972 13.575 8.67972 10.775 11.3797 10.375C7.37972 10.875 4.67972 14.375 2.57972 17.875C2.47972 18.075 2.27972 18.375 2.17972 18.575C1.67972 19.475 2.27972 20.475 3.27972 20.475H10.3797C9.67972 20.175 9.07972 19.3749 8.67972 18.6749Z"
-                                fill="currentColor" />
-                        </svg>
-                    </span>
+                <div class="login-brand">
+                    <img src="/assets/img/whatsapp-sender-logo.svg" alt="WhatsApp Sender" />
+                    <div>
+                        <h4 id="loginTitle">Welcome back</h4>
+                        <p>Sign in to continue sending messages.</p>
+                    </div>
                 </div>
-                <div class="login-form">
-                    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-                        <div class="form-floating mb-3">
-                            <input type="email" class="form-control" formControlName="email" placeholder="name@example.com">
-                            <label>Email address</label>
-                            <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
-                                class="text-danger">
-                                <div *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</div>
-                                <div *ngIf="loginForm.get('email')?.errors?.['email']">Invalid email format</div>
-                            </div>
+
+                <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
+                    <div class="field-group">
+                        <label for="loginEmail">Email</label>
+                        <input
+                            id="loginEmail"
+                            type="email"
+                            class="form-control"
+                            formControlName="email"
+                            placeholder="name@example.com"
+                        />
+                        <small *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['required']">
+                            Email is required
+                        </small>
+                        <small *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['email']">
+                            Enter a valid email
+                        </small>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="loginPassword">Password</label>
+                        <div class="password-field">
+                            <input
+                                id="loginPassword"
+                                [type]="showPassword ? 'text' : 'password'"
+                                class="form-control"
+                                formControlName="password"
+                                placeholder="Your password"
+                            />
+                            <button type="button" (click)="togglePasswordVisibility()" aria-label="Toggle password visibility">
+                                <i [class]="showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+                            </button>
                         </div>
-                        <div class="form-floating mb-3 position-relative">
-                            <input [type]="showPassword ? 'text' : 'password'" class="form-control pe-5"
-                                formControlName="password" placeholder="Password">
-                            <label>Password</label>
-                            <span class="position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer"
-                                (click)="togglePasswordVisibility()">
-                                <svg *ngIf="!showPassword" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M12 5C8.364 5 5.176 7.316 3.104 10.944C2.992 11.148 2.992 11.852 3.104 12.056C5.176 15.684 8.364 18 12 18C15.636 18 18.824 15.684 20.896 12.056C21.008 11.852 21.008 11.148 20.896 10.944C18.824 7.316 15.636 5 12 5Z"
-                                        stroke="currentColor" stroke-width="2" />
-                                    <circle cx="12" cy="12" r="3" fill="currentColor" />
-                                </svg>
-                                <svg *ngIf="showPassword" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M3 3L21 21M12 7C14.7614 7 17 9.23858 17 12C17 12.7956 16.8078 13.5587 16.4623 14.242M12 17C9.23858 17 7 14.7614 7 12C7 11.2044 7.19218 10.4413 7.53769 9.75799"
-                                        stroke="currentColor" stroke-width="2" />
-                                    <path
-                                        d="M20.896 10.944C18.824 7.316 15.636 5 12 5C10.0858 5 8.2842 5.67267 6.75549 6.75799M12 18C15.636 18 18.824 15.684 20.896 12.056"
-                                        stroke="currentColor" stroke-width="2" />
-                                </svg>
-                            </span>
-                            <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
-                                class="text-danger">
-                                <div *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</div>
-                                <div *ngIf="loginForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</div>
-                            </div>
-                        </div>
-                        <div *ngIf="loginError" class="text-danger mb-3">{{ loginError }}</div>
-                        <div class="form-group mb-3">
-                            <div class="d-flex align-items-center justify-content-between">
-                              
-                                <div class="flex-shrink-0 flex-first">
-                                    <a [routerLink]="[]" class="link fw-medium">Forgot Password?</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-lg btn-primary fw-medium full-width rounded-2"
-                                [disabled]="loginForm.invalid || isSubmitting">LogIn</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="text-center">
-                    <p class="mt-4">Haven't Any Account? <a (click)="navigateToRegister()" class="link fw-medium cursor-pointer">Create
-                            An Account</a></p>
-                </div>
+                        <small *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']">
+                            Password is required
+                        </small>
+                        <small *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['minlength']">
+                            Password must be at least 6 characters
+                        </small>
+                    </div>
+
+                    <div *ngIf="loginError" class="login-error">{{ loginError }}</div>
+
+                    <button type="submit" class="btn btn-primary login-submit" [disabled]="loginForm.invalid || isSubmitting">
+                        {{ isSubmitting ? 'Signing in...' : 'Sign in' }}
+                    </button>
+                </form>
+
+                <p class="login-footer">
+                    New here?
+                    <button type="button" (click)="navigateToRegister()">Create account</button>
+                </p>
             </div>
         </div>
     </div>

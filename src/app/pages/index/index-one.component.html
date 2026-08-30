@@ -1,0 +1,31 @@
+<app-navbar />
+
+<main class="home-page">
+  <section class="home-hero">
+    <div class="container">
+      <div class="hero-content">
+        <p class="eyebrow">WhatsApp Sender</p>
+        <h1>Send WhatsApp messages simply.</h1>
+        <p class="hero-copy">
+          Connect your WhatsApp number, save your clients, and send messages from one clean dashboard.
+        </p>
+
+        <div class="hero-actions">
+          <a routerLink="/create-account" class="btn btn-primary">Get started</a>
+          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#login">
+            Sign in
+          </button>
+        </div>
+
+        <ul class="points">
+          <li *ngFor="let point of points">
+            <i class="fa-solid fa-check"></i>
+            <span>{{ point }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<app-footer />

@@ -16,29 +16,9 @@ import { FooterComponent } from "../../components/footer/footer.component";
   styleUrl: './index-one.component.css'
 })
 export class IndexOneComponent {
-  benefits = [
-    {
-      icon: 'fa-solid fa-paper-plane',
-      title: 'Send from your own WhatsApp',
-      description: 'Connect your number once, then send messages from the dashboard or API.'
-    },
-    {
-      icon: 'fa-solid fa-users',
-      title: 'Keep clients organized',
-      description: 'Save contacts, import lists, and reuse them when sending campaigns.'
-    },
-    {
-      icon: 'fa-solid fa-key',
-      title: 'Simple API access',
-      description: 'Generate tokens and connect your systems without extra manual work.'
-    }
+  points = [
+    'Connect with QR code',
+    'Manage clients and groups',
+    'Send from dashboard or API'
   ];
-
-  steps = [
-    'Create your account',
-    'Scan the WhatsApp QR code',
-    'Send messages or use the API'
-  ];
-
-  useCases = ['Customer updates', 'Payment reminders', 'Lead follow-ups', 'Team notifications'];
 }
