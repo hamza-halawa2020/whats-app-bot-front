@@ -21,20 +21,12 @@ export class FooterComponent {
 
   link1 = [
     {
-      name:'About Us',
-      path:'/about-us'
-    },
-    {
       name:'FAQs Page',
       path:'/faq'
     },
     {
       name:'Checkout',
       path:'/checkout'
-    },
-    {
-      name:'Contact',
-      path:'/contact'
     },
     {
       name:'Blog',

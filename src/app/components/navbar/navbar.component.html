@@ -88,36 +88,12 @@
             </li>
            
           </ng-container>
-          <!-- Public navigation items (always visible) -->
-
-           <li
-              [ngClass]="{
-                active: current === '/documentation',
-              }"
-            >
-              <a routerLink="/documentation">Documentation </a>
-            </li>
-          
           <li
             [ngClass]="{
               active: current === '/' || current === '',
             }"
           >
             <a routerLink="/">Home </a>
-          </li>
-          <li
-            [ngClass]="{
-              active: current === '/about-us',
-            }"
-          >
-            <a routerLink="/about-us">About Us </a>
-          </li>
-          <li
-            [ngClass]="{
-              active: current === '/contact',
-            }"
-          >
-            <a routerLink="/contact">Contact </a>
           </li>
         </ul>
 

@@ -22,23 +22,38 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
+              {
+                "glob": "bg-1.jpg",
+                "input": "src/assets/img",
+                "output": "assets/img"
+              },
+              {
+                "glob": "404.png",
+                "input": "src/assets/img",
+                "output": "assets/img"
+              },
+              {
+                "glob": "whatsapp-sender-logo.svg",
+                "input": "src/assets/img",
+                "output": "assets/img"
+              },
+              {
+                "glob": "users.svg",
+                "input": "src/assets/img/svg",
+                "output": "assets/img/svg"
+              },
               {
                 "glob": "**/*",
                 "input": "public"
               }
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css",
               "src/assets/css/styles.css"
             ],
             "scripts": [
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/@popperjs/core/dist/umd/popper.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js",
-              "node_modules/moment/min/moment.min.js",
-              "src/assets/js/daterangepicker.js",
-              "src/assets/js/imagesloaded.js"
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
             ]
           },
           "configurations": {
@@ -96,22 +111,37 @@
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
+              {
+                "glob": "bg-1.jpg",
+                "input": "src/assets/img",
+                "output": "assets/img"
+              },
+              {
+                "glob": "404.png",
+                "input": "src/assets/img",
+                "output": "assets/img"
+              },
+              {
+                "glob": "whatsapp-sender-logo.svg",
+                "input": "src/assets/img",
+                "output": "assets/img"
+              },
+              {
+                "glob": "users.svg",
+                "input": "src/assets/img/svg",
+                "output": "assets/img/svg"
+              },
               {
                 "glob": "**/*",
                 "input": "public"
               }
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css"
             ],
             "scripts": [
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/@popperjs/core/dist/umd/popper.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js",
-              "node_modules/moment/min/moment.min.js",
-              "src/assets/js/daterangepicker.js",
-              "src/assets/js/imagesloaded.js"
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
             ]
           }
         }
