@@ -37,13 +37,12 @@ export class WhatsAppComponent implements OnInit, OnDestroy {
   }
 
   checkWhatsAppSession(): void {
-    this.whatsappService.startWhatsApp().subscribe(
+    this.whatsappService.getStatus().subscribe(
       (response) => {
         console.log('WhatsApp session check:', response);
-        this.qrCode = response.qrCode;
-        this.sessionStatus = response.status || 'starting';
+        this.applySessionResponse(response, false);
         this.errorMessage = null;
-        if (this.sessionStatus === 'starting') {
+        if (this.shouldPoll()) {
           this.startPolling();
         }
       },
@@ -57,17 +56,17 @@ export class WhatsAppComponent implements OnInit, OnDestroy {
   }
 
   startWhatsApp(): void {
+    this.stopPolling();
     this.loading = true;
     this.successMessage = null;
     this.errorMessage = null;
     this.whatsappService.startWhatsApp().subscribe(
       (response) => {
-        this.qrCode = response.qrCode;
-        this.sessionStatus = response.status || 'starting';
+        this.applySessionResponse(response);
         this.successMessage = response.message;
         this.errorMessage = null;
         this.loading = false;
-        if (this.sessionStatus === 'starting') {
+        if (this.shouldPoll()) {
           this.startPolling();
         }
       },
@@ -81,18 +80,18 @@ export class WhatsAppComponent implements OnInit, OnDestroy {
   }
 
   restartWhatsApp(): void {
+    this.stopPolling();
     this.loading = true;
     this.successMessage = null;
     this.errorMessage = null;
     this.whatsappService.restartWhatsApp().subscribe(
       (response) => {
         console.log('WhatsApp restarted:', response);
-        this.qrCode = response.qrCode;
-        this.sessionStatus = response.status || 'starting';
+        this.applySessionResponse(response);
         this.successMessage = response.message;
         this.errorMessage = null;
         this.loading = false;
-        if (this.sessionStatus === 'starting') {
+        if (this.shouldPoll()) {
           this.startPolling();
         }
       },
@@ -107,6 +106,7 @@ export class WhatsAppComponent implements OnInit, OnDestroy {
   }
 
   deleteWhatsApp(): void {
+    this.stopPolling();
     this.loading = true;
     this.successMessage = null;
     this.errorMessage = null;
@@ -134,11 +134,10 @@ export class WhatsAppComponent implements OnInit, OnDestroy {
   private startPolling(): void {
     this.stopPolling(); // Ensure no duplicate polling
     this.pollingSubscription = interval(5000) // Poll every 5 seconds
-      .pipe(switchMap(() => this.whatsappService.startWhatsApp()))
+      .pipe(switchMap(() => this.whatsappService.getStatus()))
       .subscribe(
         (response) => {
-          this.qrCode = response.qrCode;
-          this.sessionStatus = response.status || 'starting';
+          this.applySessionResponse(response);
           if (this.sessionStatus === 'ready') {
             this.successMessage = 'WhatsApp session is now active!';
             this.stopPolling();
@@ -151,6 +150,20 @@ export class WhatsAppComponent implements OnInit, OnDestroy {
           this.stopPolling();
         }
       );
+  }
+
+  private applySessionResponse(response: {
+    qrCode?: string | null;
+    status?: string;
+    session?: { qrCode?: string | null; status?: string } | null;
+  }, defaultToStarting = true): void {
+    this.qrCode = response.qrCode ?? response.session?.qrCode ?? null;
+    this.sessionStatus =
+      response.status || response.session?.status || (defaultToStarting ? 'starting' : null);
+  }
+
+  private shouldPoll(): boolean {
+    return Boolean(this.sessionStatus && this.sessionStatus !== 'ready');
   }
 
   private stopPolling(): void {

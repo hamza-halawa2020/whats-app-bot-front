@@ -202,6 +202,7 @@ export class SendMessageComponent implements OnInit {
       error: (error) => {
         console.error('Error sending message:', error);
         this.errorMessage = error.message || 'Failed to send message';
+        this.isSendingMessage = false;
       },
       complete: () => {
         this.isSendingMessage = false;
@@ -271,6 +272,7 @@ export class SendMessageComponent implements OnInit {
         error: (error) => {
           console.error('Error initiating broadcast:', error);
           this.errorMessage = error.message || 'Failed to initiate broadcast';
+          this.isSendingBroadcast = false;
         },
         complete: () => {
           this.isSendingBroadcast = false;

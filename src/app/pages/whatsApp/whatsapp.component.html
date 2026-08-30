@@ -31,7 +31,10 @@
               <span
                 [ngClass]="{
                   'text-success': sessionStatus === 'ready',
-                  'text-warning': sessionStatus === 'starting',
+                  'text-warning':
+                    sessionStatus === 'starting' ||
+                    sessionStatus === 'pending' ||
+                    sessionStatus === 'authenticated',
                   'text-danger': !sessionStatus
                 }"
               >

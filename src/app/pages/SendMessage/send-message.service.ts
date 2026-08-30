@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, throwError, TimeoutError } from 'rxjs';
+import { catchError, timeout } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 interface MessageResponse {
@@ -66,8 +66,17 @@ export class SendMessageService {
         message,
       })
       .pipe(
+        timeout(15000),
         catchError((error) => {
           console.error('Send message error:', error);
+          if (error instanceof TimeoutError) {
+            return throwError(
+              () =>
+                new Error(
+                  'WhatsApp is taking too long to respond. Make sure the session is ready, then try again.'
+                )
+            );
+          }
           return throwError(
             () => new Error(error.error?.error || 'Failed to send message')
           );
@@ -104,8 +113,17 @@ export class SendMessageService {
     return this.http
       .post<BroadcastResponse>(`${this.apiUrl}/messages/broadcast`, payload)
       .pipe(
+        timeout(15000),
         catchError((error) => {
           console.error('Broadcast error:', error);
+          if (error instanceof TimeoutError) {
+            return throwError(
+              () =>
+                new Error(
+                  'WhatsApp is taking too long to respond. Make sure the session is ready, then try again.'
+                )
+            );
+          }
           return throwError(
             () => new Error(error.error?.error || 'Failed to send broadcast')
           );
