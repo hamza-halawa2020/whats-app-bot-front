@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://backend-sender.hamza-halawa.cloud/api',
+  apiUrl: 'http://localhost:3000/api',
+  // apiUrl: 'https://backend-sender.hamza-halawa.cloud/api',
 };

@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
   loginError: string | null = null;
   isSubmitting: boolean = false;
-  showPassword: boolean = false; // Track password visibility
+  showPassword: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -38,24 +38,19 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngOnInit(): void { }
 
   ngOnDestroy(): void {
-    // Clean up any remaining modal artifacts
     this.cleanupModal();
   }
 
-  // Method to close modal and navigate to register page
   navigateToRegister(): void {
     this.closeModal();
     setTimeout(() => {
-      // Check if we're already on the create-account page
       if (this.router.url === '/create-account') {
-        // Just close the modal, don't navigate
         return;
       }
       this.router.navigate(['/create-account']);
-    }, 300); // Small delay to ensure modal is fully closed
+    }, 300);
   }
 
-  // Method to close the modal properly
   private closeModal(): void {
     const modalElement = document.getElementById('login');
     if (modalElement) {
@@ -67,18 +62,14 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.cleanupModal();
   }
 
-  // Clean up modal artifacts
   private cleanupModal(): void {
-    // Remove any remaining backdrop
     const backdrops = document.querySelectorAll('.modal-backdrop');
     backdrops.forEach(backdrop => backdrop.remove());
 
-    // Remove modal-open class from body
     document.body.classList.remove('modal-open');
     document.body.style.overflow = '';
     document.body.style.paddingRight = '';
 
-    // Reset any inline styles that might interfere
     document.body.removeAttribute('style');
   }
 

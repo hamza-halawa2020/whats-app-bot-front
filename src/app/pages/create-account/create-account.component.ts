@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
-import { LoginComponent } from '../../components/login/login.component';
 import { AuthService } from '../../services/auth.service';
 
 declare var bootstrap: any;
@@ -17,49 +16,33 @@ declare var bootstrap: any;
     ReactiveFormsModule,
     NavbarComponent,
     FooterComponent,
-    LoginComponent,
 
   ],
   templateUrl: './create-account.component.html',
   styleUrls: ['./create-account.component.css'],
 })
-export class CreateAccountComponent implements OnInit {
+export class CreateAccountComponent {
   signupForm: FormGroup;
-  loginForm: FormGroup;
   signupError: string | null = null;
-  loginError: string | null = null;
+  signupSuccess: string | null = null;
   isSubmitting: boolean = false;
   showPassword: boolean = false;
-  isLoginMode: boolean = false;
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router
+    private authService: AuthService
   ) {
     this.signupForm = this.fb.group({
-      email: ['', [Validators.email]],
+      email: ['', [Validators.required, Validators.email]],
       name: ['', [Validators.required, Validators.minLength(3)]],
-      password: ['', [Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
       phone: ['', [Validators.required, Validators.pattern(/^\d{10,15}$/)]],
     });
-
-    this.loginForm = this.fb.group({
-      phone: ['', [Validators.required, Validators.pattern(/^\d{10,15}$/)]],
-      password: [''],
-    });
-  }
-
-  ngOnInit(): void {}
-
-  toggleMode(): void {
-    this.isLoginMode = !this.isLoginMode;
-    this.signupError = null;
-    this.loginError = null;
   }
 
   async onSignup(): Promise<void> {
     if (this.isSubmitting || this.signupForm.invalid) {
+      this.signupSuccess = null;
       this.signupError = this.signupForm.invalid
         ? 'Please fill in all required fields correctly'
         : null;
@@ -76,43 +59,14 @@ export class CreateAccountComponent implements OnInit {
 
       if (result) {
         this.signupError = null;
+        this.signupSuccess = 'Account created successfully. Sign in to continue.';
         this.signupForm.reset();
-        // After successful registration, switch to login mode
-        this.isLoginMode = true;
-        this.loginForm.patchValue({ phone });
+        this.openLoginModal();
       }
     } catch (error: any) {
+      this.signupSuccess = null;
       this.signupError = error.error?.error || 'Failed to create account';
       console.error('Signup error:', error);
-    } finally {
-      this.isSubmitting = false;
-    }
-  }
-
-  async onLogin(): Promise<void> {
-    if (this.isSubmitting || this.loginForm.invalid) {
-      this.loginError = this.loginForm.invalid
-        ? 'Please fill in all required fields correctly'
-        : null;
-      return;
-    }
-
-    this.isSubmitting = true;
-    const { phone, password } = this.loginForm.value;
-    console.log('Login attempt:', { phone });
-
-    try {
-      const result = await this.authService.login({ phone, password }).toPromise();
-      console.log('Login result:', result);
-
-      if (result && result.token) {
-        this.loginError = null;
-        this.loginForm.reset();
-        this.router.navigate(['/']);
-      }
-    } catch (error: any) {
-      this.loginError = error.error?.error || 'Failed to login';
-      console.error('Login error:', error);
     } finally {
       this.isSubmitting = false;
     }
@@ -122,7 +76,6 @@ export class CreateAccountComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
-  // Method to open login modal
   openLoginModal(): void {
     const modalElement = document.getElementById('login');
     if (modalElement) {
