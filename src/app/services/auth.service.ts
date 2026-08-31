@@ -13,6 +13,7 @@ export interface AppUser {
   username?: string;
   role?: 'admin' | 'user';
   walletPoints?: number;
+  isVerified?: boolean;
 }
 
 interface LoginResponse {

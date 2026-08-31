@@ -16,6 +16,7 @@ import { WalletService } from '../../services/wallet.service';
 export class AdminUsersComponent implements OnInit {
   users: AppUser[] = [];
   selectedUser: AppUser | null = null;
+  editingUser: AppUser | null = null;
   points = 1;
   note = '';
   action: 'credit' | 'debit' = 'credit';
@@ -29,6 +30,15 @@ export class AdminUsersComponent implements OnInit {
     password: '',
     role: 'user' as 'admin' | 'user',
     walletPoints: 0,
+    isVerified: true,
+  };
+  editUserForm = {
+    username: '',
+    email: '',
+    phone: '',
+    password: '',
+    role: 'user' as 'admin' | 'user',
+    isVerified: true,
   };
 
   constructor(private walletService: WalletService) {}
@@ -107,11 +117,55 @@ export class AdminUsersComponent implements OnInit {
           password: '',
           role: 'user',
           walletPoints: 0,
+          isVerified: true,
         };
         this.loadUsers();
       },
       error: (error) => {
         this.errorMessage = error.error?.error || 'Failed to create user';
+      },
+    });
+  }
+
+  openEditUser(user: AppUser): void {
+    this.editingUser = user;
+    this.editUserForm = {
+      username: user.username || '',
+      email: user.email || '',
+      phone: user.phone || '',
+      password: '',
+      role: user.role || 'user',
+      isVerified: Boolean(user.isVerified),
+    };
+    this.errorMessage = null;
+    this.successMessage = null;
+  }
+
+  updateUser(): void {
+    if (!this.editingUser) {
+      return;
+    }
+
+    const payload: any = {
+      username: this.editUserForm.username,
+      email: this.editUserForm.email,
+      phone: this.editUserForm.phone,
+      role: this.editUserForm.role,
+      isVerified: this.editUserForm.isVerified,
+    };
+
+    if (this.editUserForm.password) {
+      payload.password = this.editUserForm.password;
+    }
+
+    this.walletService.updateUser(this.editingUser.id, payload).subscribe({
+      next: (response) => {
+        this.successMessage = response.message;
+        this.editingUser = null;
+        this.loadUsers();
+      },
+      error: (error) => {
+        this.errorMessage = error.error?.error || 'Failed to update user';
       },
     });
   }

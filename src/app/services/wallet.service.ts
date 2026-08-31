@@ -39,6 +39,7 @@ export interface AdminCreateUserPayload {
   password: string;
   role: 'admin' | 'user';
   walletPoints: number;
+  isVerified?: boolean;
 }
 
 export interface WalletActionResponse {
@@ -73,6 +74,16 @@ export class WalletService {
   createUser(payload: AdminCreateUserPayload): Observable<{ success: boolean; message: string; user: AppUser }> {
     return this.http.post<{ success: boolean; message: string; user: AppUser }>(
       `${this.apiUrl}/admin/users`,
+      payload
+    );
+  }
+
+  updateUser(
+    userId: string | number,
+    payload: Partial<Omit<AdminCreateUserPayload, 'walletPoints'>>
+  ): Observable<{ success: boolean; message: string; user: AppUser }> {
+    return this.http.patch<{ success: boolean; message: string; user: AppUser }>(
+      `${this.apiUrl}/admin/users/${userId}`,
       payload
     );
   }
