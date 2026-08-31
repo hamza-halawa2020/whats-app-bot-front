@@ -1,40 +1,39 @@
 <div class="modal fade" id="login" tabindex="-1" aria-labelledby="loginTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered login-modal">
-        <div class="modal-content">
-            <button type="button" class="login-close" data-bs-dismiss="modal" aria-label="Close">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-            <div class="modal-body">
-                <div class="login-brand">
-                    <img src="/assets/img/whatsapp-sender-logo.svg" alt="WhatsApp Sender" />
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-3 shadow">
+            <div class="modal-header border-0 pb-0">
+                <div class="d-flex align-items-center gap-2">
+                    <img src="/assets/img/whatsapp-sender-logo.svg" alt="WhatsApp Sender" width="40" height="40" />
                     <div>
-                        <h4 id="loginTitle">Welcome back</h4>
-                        <p>Sign in to continue sending messages.</p>
+                        <h5 class="modal-title fw-bold" id="loginTitle">Sign in</h5>
+                        <small class="text-secondary">Continue to your dashboard</small>
                     </div>
                 </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
 
-                <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
-                    <div class="field-group">
-                        <label for="loginEmail">Email</label>
+            <div class="modal-body p-4">
+                <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="row g-3">
+                    <div class="col-12">
+                        <label for="loginEmail" class="form-label fw-semibold">Email</label>
                         <input
                             id="loginEmail"
                             type="email"
-                            class="form-control"
+                            class="form-control form-control-lg"
                             formControlName="email"
                             placeholder="name@example.com"
                         />
-                        <small *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['required']">
+                        <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['required']" class="form-text text-danger">
                             Email is required
-                        </small>
-                        <small *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['email']">
+                        </div>
+                        <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['email']" class="form-text text-danger">
                             Enter a valid email
-                        </small>
+                        </div>
                     </div>
 
-                    <div class="field-group">
-                        <label for="loginPassword">Password</label>
-                        <div class="password-field">
+                    <div class="col-12">
+                        <label for="loginPassword" class="form-label fw-semibold">Password</label>
+                        <div class="input-group input-group-lg">
                             <input
                                 id="loginPassword"
                                 [type]="showPassword ? 'text' : 'password'"
@@ -42,28 +41,34 @@
                                 formControlName="password"
                                 placeholder="Your password"
                             />
-                            <button type="button" (click)="togglePasswordVisibility()" aria-label="Toggle password visibility">
+                            <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordVisibility()" aria-label="Toggle password visibility">
                                 <i [class]="showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
                             </button>
                         </div>
-                        <small *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']">
+                        <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']" class="form-text text-danger">
                             Password is required
-                        </small>
-                        <small *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['minlength']">
+                        </div>
+                        <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['minlength']" class="form-text text-danger">
                             Password must be at least 6 characters
-                        </small>
+                        </div>
                     </div>
 
-                    <div *ngIf="loginError" class="login-error">{{ loginError }}</div>
+                    <div *ngIf="loginError" class="col-12">
+                        <div class="alert alert-danger mb-0">{{ loginError }}</div>
+                    </div>
 
-                    <button type="submit" class="btn btn-primary login-submit" [disabled]="loginForm.invalid || isSubmitting">
-                        {{ isSubmitting ? 'Signing in...' : 'Sign in' }}
-                    </button>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="loginForm.invalid || isSubmitting">
+                            {{ isSubmitting ? 'Signing in...' : 'Sign in' }}
+                        </button>
+                    </div>
                 </form>
 
-                <p class="login-footer">
+                <p class="text-center text-secondary mt-4 mb-0">
                     New here?
-                    <button type="button" (click)="navigateToRegister()">Create account</button>
+                    <button type="button" class="btn btn-link fw-semibold p-0 align-baseline" (click)="navigateToRegister()">
+                        Create account
+                    </button>
                 </p>
             </div>
         </div>

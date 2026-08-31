@@ -1,132 +1,143 @@
 <app-navbar></app-navbar>
 
-<main class="signup-page">
-    <section class="signup-section">
-        <div class="container">
-            <div class="signup-shell">
-                <aside class="signup-intro">
-                    <a class="brand-line" routerLink="/">
-                        <img src="/assets/img/whatsapp-sender-logo.svg" alt="WhatsApp Sender" />
-                        <span>WhatsApp Sender</span>
+<main class="bg-body-tertiary">
+    <section class="container min-vh-100 d-flex align-items-center py-5">
+        <div class="row justify-content-center align-items-center g-4 w-100 py-5">
+            <div class="col-lg-5">
+                <div class="mb-4">
+                    <a class="d-inline-flex align-items-center gap-2 text-decoration-none text-dark" routerLink="/">
+                        <img src="/assets/img/whatsapp-sender-logo.svg" alt="WhatsApp Sender" width="42" height="42" />
+                        <span class="fw-bold fs-5">WhatsApp Sender</span>
                     </a>
+                </div>
 
-                    <div>
-                        <p class="eyebrow">Start in minutes</p>
-                        <h1>Create your messaging workspace.</h1>
-                        <p>
-                            Save your clients, connect WhatsApp with a QR code, and send messages from a clean dashboard.
-                        </p>
-                    </div>
+                <span class="badge text-bg-success mb-3">Start in minutes</span>
+                <h1 class="display-6 fw-bold text-dark mb-3">Create your messaging workspace.</h1>
+                <p class="lead text-secondary mb-4">
+                    Save your clients, connect WhatsApp with a QR code, and send messages from a clean dashboard.
+                </p>
 
-                    <ul class="signup-points">
-                        <li>
-                            <i class="fa-solid fa-check"></i>
-                            No complicated setup
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-check"></i>
-                            Clients and groups in one place
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-check"></i>
-                            Dashboard and API sending
-                        </li>
-                    </ul>
-                </aside>
+                <ul class="list-group list-group-flush rounded-3 overflow-hidden shadow-sm">
+                    <li class="list-group-item d-flex align-items-center gap-2">
+                        <span class="badge rounded-pill text-bg-success"><i class="fa-solid fa-check"></i></span>
+                        No complicated setup
+                    </li>
+                    <li class="list-group-item d-flex align-items-center gap-2">
+                        <span class="badge rounded-pill text-bg-success"><i class="fa-solid fa-check"></i></span>
+                        Clients and groups in one place
+                    </li>
+                    <li class="list-group-item d-flex align-items-center gap-2">
+                        <span class="badge rounded-pill text-bg-success"><i class="fa-solid fa-check"></i></span>
+                        Dashboard and API sending
+                    </li>
+                </ul>
+            </div>
 
-                <section class="signup-card" aria-labelledby="signupTitle">
-                    <div class="form-heading">
-                        <h2 id="signupTitle">Create account</h2>
-                        <p>Enter your details to open the dashboard.</p>
-                    </div>
-
-                    <form [formGroup]="signupForm" (ngSubmit)="onSignup()" class="signup-form">
-                        <div class="field-group">
-                            <label for="signupName">Name</label>
-                            <input
-                                id="signupName"
-                                type="text"
-                                class="form-control"
-                                formControlName="name"
-                                placeholder="Full name"
-                            />
-                            <small *ngIf="signupForm.get('name')?.touched && signupForm.get('name')?.errors?.['required']">
-                                Name is required
-                            </small>
-                            <small *ngIf="signupForm.get('name')?.touched && signupForm.get('name')?.errors?.['minlength']">
-                                Name must be at least 3 characters
-                            </small>
+            <div class="col-lg-6">
+                <div class="card border-0 rounded-3 shadow-sm">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="mb-4">
+                            <h2 class="fw-bold mb-1" id="signupTitle">Create account</h2>
+                            <p class="text-secondary mb-0">Enter your details to open the dashboard.</p>
                         </div>
 
-                        <div class="field-group">
-                            <label for="signupEmail">Email</label>
-                            <input
-                                id="signupEmail"
-                                type="email"
-                                class="form-control"
-                                formControlName="email"
-                                placeholder="name@example.com"
-                            />
-                            <small *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.errors?.['required']">
-                                Email is required
-                            </small>
-                            <small *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.errors?.['email']">
-                                Enter a valid email
-                            </small>
-                        </div>
-
-                        <div class="field-group">
-                            <label for="signupPhone">Phone</label>
-                            <input
-                                id="signupPhone"
-                                type="tel"
-                                class="form-control"
-                                formControlName="phone"
-                                placeholder="201001234567"
-                            />
-                            <small *ngIf="signupForm.get('phone')?.touched && signupForm.get('phone')?.errors?.['required']">
-                                Phone number is required
-                            </small>
-                            <small *ngIf="signupForm.get('phone')?.touched && signupForm.get('phone')?.errors?.['pattern']">
-                                Phone number must be 10-15 digits
-                            </small>
-                        </div>
-
-                        <div class="field-group">
-                            <label for="signupPassword">Password</label>
-                            <div class="password-field">
+                        <form [formGroup]="signupForm" (ngSubmit)="onSignup()" class="row g-3" aria-labelledby="signupTitle">
+                            <div class="col-md-6">
+                                <label for="signupName" class="form-label fw-semibold">Name</label>
                                 <input
-                                    id="signupPassword"
-                                    [type]="showPassword ? 'text' : 'password'"
-                                    class="form-control"
-                                    formControlName="password"
-                                    placeholder="At least 6 characters"
+                                    id="signupName"
+                                    type="text"
+                                    class="form-control form-control-lg"
+                                    formControlName="name"
+                                    placeholder="Full name"
                                 />
-                                <button type="button" (click)="togglePasswordVisibility()" aria-label="Toggle password visibility">
-                                    <i [class]="showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+                                <div *ngIf="signupForm.get('name')?.touched && signupForm.get('name')?.errors?.['required']" class="form-text text-danger">
+                                    Name is required
+                                </div>
+                                <div *ngIf="signupForm.get('name')?.touched && signupForm.get('name')?.errors?.['minlength']" class="form-text text-danger">
+                                    Name must be at least 3 characters
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="signupEmail" class="form-label fw-semibold">Email</label>
+                                <input
+                                    id="signupEmail"
+                                    type="email"
+                                    class="form-control form-control-lg"
+                                    formControlName="email"
+                                    placeholder="name@example.com"
+                                />
+                                <div *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.errors?.['required']" class="form-text text-danger">
+                                    Email is required
+                                </div>
+                                <div *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.errors?.['email']" class="form-text text-danger">
+                                    Enter a valid email
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="signupPhone" class="form-label fw-semibold">Phone</label>
+                                <input
+                                    id="signupPhone"
+                                    type="tel"
+                                    class="form-control form-control-lg"
+                                    formControlName="phone"
+                                    placeholder="201001234567"
+                                />
+                                <div *ngIf="signupForm.get('phone')?.touched && signupForm.get('phone')?.errors?.['required']" class="form-text text-danger">
+                                    Phone number is required
+                                </div>
+                                <div *ngIf="signupForm.get('phone')?.touched && signupForm.get('phone')?.errors?.['pattern']" class="form-text text-danger">
+                                    Phone number must be 10-15 digits
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="signupPassword" class="form-label fw-semibold">Password</label>
+                                <div class="input-group input-group-lg">
+                                    <input
+                                        id="signupPassword"
+                                        [type]="showPassword ? 'text' : 'password'"
+                                        class="form-control"
+                                        formControlName="password"
+                                        placeholder="At least 6 characters"
+                                    />
+                                    <button class="btn btn-outline-secondary" type="button" (click)="togglePasswordVisibility()" aria-label="Toggle password visibility">
+                                        <i [class]="showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+                                    </button>
+                                </div>
+                                <div *ngIf="signupForm.get('password')?.touched && signupForm.get('password')?.errors?.['required']" class="form-text text-danger">
+                                    Password is required
+                                </div>
+                                <div *ngIf="signupForm.get('password')?.touched && signupForm.get('password')?.errors?.['minlength']" class="form-text text-danger">
+                                    Password must be at least 6 characters
+                                </div>
+                            </div>
+
+                            <div *ngIf="signupSuccess" class="col-12">
+                                <div class="alert alert-success mb-0">{{ signupSuccess }}</div>
+                            </div>
+
+                            <div *ngIf="signupError" class="col-12">
+                                <div class="alert alert-danger mb-0">{{ signupError }}</div>
+                            </div>
+
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="signupForm.invalid || isSubmitting">
+                                    {{ isSubmitting ? 'Creating account...' : 'Create account' }}
                                 </button>
                             </div>
-                            <small *ngIf="signupForm.get('password')?.touched && signupForm.get('password')?.errors?.['required']">
-                                Password is required
-                            </small>
-                            <small *ngIf="signupForm.get('password')?.touched && signupForm.get('password')?.errors?.['minlength']">
-                                Password must be at least 6 characters
-                            </small>
-                        </div>
+                        </form>
 
-                        <div *ngIf="signupSuccess" class="form-success">{{ signupSuccess }}</div>
-                        <div *ngIf="signupError" class="form-error">{{ signupError }}</div>
-
-                        <button type="submit" class="btn btn-primary signup-submit" [disabled]="signupForm.invalid || isSubmitting">
-                            {{ isSubmitting ? 'Creating account...' : 'Create account' }}
-                        </button>
-                    </form>
-
-                    <p class="signin-line">
-                        Already have an account?
-                        <button type="button" (click)="openLoginModal()">Sign in</button>
-                    </p>
-                </section>
+                        <p class="text-center text-secondary mt-4 mb-0">
+                            Already have an account?
+                            <button type="button" class="btn btn-link fw-semibold p-0 align-baseline" (click)="openLoginModal()">
+                                Sign in
+                            </button>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

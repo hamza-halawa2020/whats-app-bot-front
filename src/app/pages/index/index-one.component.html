@@ -1,28 +1,74 @@
 <app-navbar />
 
-<main class="home-page">
-  <section class="home-hero">
-    <div class="container">
-      <div class="hero-content">
-        <p class="eyebrow">WhatsApp Sender</p>
-        <h1>Send WhatsApp messages simply.</h1>
-        <p class="hero-copy">
+<main class="bg-body-tertiary">
+  <section class="container min-vh-100 d-flex align-items-center py-5">
+    <div class="row align-items-center g-5 py-5">
+      <div class="col-lg-6">
+        <span class="badge text-bg-success mb-3">WhatsApp Sender</span>
+        <h1 class="display-4 fw-bold text-dark mb-4">
+          Send WhatsApp messages simply.
+        </h1>
+        <p class="lead text-secondary mb-4">
           Connect your WhatsApp number, save your clients, and send messages from one clean dashboard.
         </p>
 
-        <div class="hero-actions">
-          <a routerLink="/create-account" class="btn btn-primary">Get started</a>
-          <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#login">
+        <div class="d-flex flex-column flex-sm-row gap-2 mb-4">
+          <a routerLink="/create-account" class="btn btn-primary btn-lg px-4">Get started</a>
+          <button class="btn btn-outline-primary btn-lg px-4" data-bs-toggle="modal" data-bs-target="#login">
             Sign in
           </button>
         </div>
 
-        <ul class="points">
-          <li *ngFor="let point of points">
-            <i class="fa-solid fa-check"></i>
+        <ul class="list-unstyled d-grid gap-2 mb-0">
+          <li *ngFor="let point of points" class="d-flex align-items-center gap-2 text-secondary">
+            <span class="badge rounded-pill text-bg-success">
+              <i class="fa-solid fa-check"></i>
+            </span>
             <span>{{ point }}</span>
           </li>
         </ul>
+      </div>
+
+      <div class="col-lg-5 offset-lg-1">
+        <div class="card border-0 shadow-sm rounded-3">
+          <div class="card-body p-4">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge rounded-pill text-bg-success">&nbsp;</span>
+                <strong>WhatsApp connected</strong>
+              </div>
+              <span class="badge text-bg-light">Live</span>
+            </div>
+
+            <div class="alert alert-light border mb-3">
+              Select clients from your saved list.
+            </div>
+            <div class="alert alert-success mb-4 ms-lg-5">
+              Your order update has been sent successfully.
+            </div>
+
+            <div class="row g-2 text-center">
+              <div class="col-4">
+                <div class="border rounded-3 p-3">
+                  <strong class="d-block">3</strong>
+                  <small class="text-secondary">steps</small>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="border rounded-3 p-3">
+                  <strong class="d-block">1</strong>
+                  <small class="text-secondary">inbox</small>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="border rounded-3 p-3">
+                  <strong class="d-block">API</strong>
+                  <small class="text-secondary">ready</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
