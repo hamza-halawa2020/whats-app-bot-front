@@ -11,6 +11,8 @@ import { ClientsService } from '../clients/clients.service';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { COUNTRY_CODES, CountryCode } from '../clients/country-codes';
+import { AuthService } from '../../services/auth.service';
+import { RouterLink } from '@angular/router';
 
 interface ClientData {
   id: string;
@@ -37,6 +39,7 @@ interface Schedule {
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterLink,
     NavbarComponent,
     FooterComponent,
   ],
@@ -58,10 +61,12 @@ export class SendMessageComponent implements OnInit {
   currentPage: number = 1;
   pageSize: number = 100;
   totalPages: number = 0;
+  walletPoints: number = 0;
 
   constructor(
     private sendMessageService: SendMessageService,
     private clientsService: ClientsService,
+    private authService: AuthService,
     private fb: FormBuilder
   ) {
     this.sendMessageForm = this.fb.group({
@@ -85,7 +90,19 @@ export class SendMessageComponent implements OnInit {
   ngOnInit(): void {
     this.loadClients();
     this.loadSchedules();
+    this.loadUserWallet();
     this.setupSendMessageFormListeners();
+  }
+
+  loadUserWallet(): void {
+    this.authService.refreshMe().subscribe({
+      next: (response) => {
+        this.walletPoints = response.user.walletPoints || 0;
+      },
+      error: () => {
+        this.walletPoints = this.authService.getUser()?.walletPoints || 0;
+      },
+    });
   }
 
   loadClients(): void {
@@ -173,6 +190,11 @@ export class SendMessageComponent implements OnInit {
   }
 
   sendMessage(): void {
+    if (this.walletPoints <= 0) {
+      this.errorMessage = 'You do not have enough points to send messages.';
+      return;
+    }
+
     if (this.sendMessageForm.invalid) {
       this.errorMessage = 'Please fill in all required fields correctly';
       return;
@@ -198,6 +220,10 @@ export class SendMessageComponent implements OnInit {
         console.log('Message sent:', response);
         this.sendMessageForm.reset({ inputType: 'manual', countryCode: '+20' });
         this.successMessage = response.message || 'Message sent successfully';
+        if (typeof response.remainingPoints === 'number') {
+          this.walletPoints = response.remainingPoints;
+          this.authService.updateWalletPoints(response.remainingPoints);
+        }
       },
       error: (error) => {
         console.error('Error sending message:', error);
@@ -211,6 +237,11 @@ export class SendMessageComponent implements OnInit {
   }
 
   sendBroadcast(): void {
+    if (this.walletPoints <= 0) {
+      this.errorMessage = 'You do not have enough points to send messages.';
+      return;
+    }
+
     if (this.broadcastForm.invalid) {
       this.errorMessage = 'Please fill in all required fields correctly';
       return;
@@ -244,6 +275,12 @@ export class SendMessageComponent implements OnInit {
       return;
     }
 
+    if (phones.length > this.walletPoints) {
+      this.errorMessage = `You need ${phones.length} points for this broadcast. Available: ${this.walletPoints}.`;
+      this.isSendingBroadcast = false;
+      return;
+    }
+
     this.sendMessageService
       .sendRandomMessages(
         messages,
@@ -267,6 +304,10 @@ export class SendMessageComponent implements OnInit {
           this.successMessage = response.scheduleId
             ? `Scheduled messages initiated. Schedule ID: ${response.scheduleId}. Total phone numbers: ${response.total}`
             : `Broadcast initiated. Total phone numbers: ${response.total}, Batch size: ${response.batchSize}, Interval: ${response.intervalMs}ms`;
+          if (typeof response.remainingPoints === 'number') {
+            this.walletPoints = response.remainingPoints;
+            this.authService.updateWalletPoints(response.remainingPoints);
+          }
           this.loadSchedules(); // Refresh schedules list
         },
         error: (error) => {

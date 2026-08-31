@@ -1,0 +1,58 @@
+.admin-page {
+  min-height: 100vh;
+  padding: 118px 0 64px;
+  background: #f8fafc;
+}
+
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.page-head h1 {
+  margin: 10px 0 6px;
+  font-size: 2rem;
+  font-weight: 750;
+  color: #111827;
+}
+
+.page-head p {
+  margin: 0;
+  color: #667085;
+}
+
+.create-box,
+.action-box,
+.users-box {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 22px;
+}
+
+.create-box,
+.action-box {
+  margin-bottom: 18px;
+}
+
+.create-box h2,
+.action-box h2 {
+  margin: 0 0 4px;
+  font-size: 1.2rem;
+  font-weight: 750;
+}
+
+.action-box p {
+  margin: 0 0 16px;
+  color: #667085;
+}
+
+@media (max-width: 767px) {
+  .page-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

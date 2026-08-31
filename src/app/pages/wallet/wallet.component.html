@@ -1,0 +1,59 @@
+<app-navbar />
+
+<main class="wallet-page">
+  <section class="container">
+    <div class="page-head">
+      <div>
+        <span class="badge text-bg-primary">Wallet</span>
+        <h1>Your points</h1>
+        <p>Every WhatsApp message uses points from this balance.</p>
+      </div>
+      <button class="btn btn-outline-primary" type="button" (click)="loadWallet()" [disabled]="isLoading">
+        Refresh
+      </button>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+    <div class="balance-box">
+      <span>Available points</span>
+      <strong>{{ walletPoints }}</strong>
+    </div>
+
+    <div class="history-box">
+      <h2>Recent activity</h2>
+
+      <div *ngIf="isLoading" class="text-secondary">Loading...</div>
+      <div *ngIf="!isLoading && transactions.length === 0" class="text-secondary">
+        No wallet activity yet.
+      </div>
+
+      <div *ngIf="transactions.length > 0" class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Source</th>
+              <th>Points</th>
+              <th>Balance</th>
+              <th>Note</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of transactions">
+              <td><span class="badge text-bg-light">{{ item.type }}</span></td>
+              <td>{{ item.source }}</td>
+              <td>{{ item.points }}</td>
+              <td>{{ item.balanceAfter }}</td>
+              <td>{{ item.note || '-' }}</td>
+              <td>{{ item.createdAt | date : 'short' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<app-footer />

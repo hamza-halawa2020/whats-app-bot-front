@@ -9,6 +9,11 @@
         <p class="text-secondary mb-0">Send a single message, start a broadcast, or manage schedules.</p>
       </div>
 
+      <div class="alert d-flex justify-content-between align-items-center" [class.alert-success]="walletPoints > 0" [class.alert-warning]="walletPoints <= 0">
+        <span>Available points: <strong>{{ walletPoints }}</strong></span>
+        <a routerLink="/wallet" class="btn btn-sm btn-outline-primary">Wallet</a>
+      </div>
+
       <div class="card border-0 shadow-sm">
         <div class="card-body p-4">
           <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
@@ -91,7 +96,7 @@
               </div>
 
               <div class="col-12">
-                <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="sendMessageForm.invalid || isSendingMessage">
+                <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="sendMessageForm.invalid || isSendingMessage || walletPoints <= 0">
                   <span *ngIf="!isSendingMessage">Send Message</span>
                   <span *ngIf="isSendingMessage">
                     <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -146,7 +151,7 @@
               </div>
 
               <div class="col-12">
-                <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="broadcastForm.invalid || isSendingBroadcast">
+                <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="broadcastForm.invalid || isSendingBroadcast || walletPoints <= 0">
                   <span *ngIf="!isSendingBroadcast">Send Broadcast</span>
                   <span *ngIf="isSendingBroadcast">
                     <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

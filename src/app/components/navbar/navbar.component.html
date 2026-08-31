@@ -39,10 +39,23 @@
           <li class="nav-item">
             <a class="nav-link" routerLink="/token" routerLinkActive="active">Token</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/wallet" routerLinkActive="active">Wallet</a>
+          </li>
+          <li class="nav-item" *ngIf="(currentUser$ | async)?.role === 'admin'">
+            <a class="nav-link" routerLink="/admin/users" routerLinkActive="active">Admin</a>
+          </li>
         </ng-container>
       </ul>
 
-      <div class="d-flex ms-lg-3 mt-3 mt-lg-0">
+      <div class="d-flex align-items-center gap-2 ms-lg-3 mt-3 mt-lg-0">
+        <a
+          *ngIf="currentUser$ | async as currentUser"
+          class="btn btn-light border"
+          routerLink="/wallet"
+        >
+          {{ currentUser.walletPoints || 0 }} pts
+        </a>
         <button
           *ngIf="!(isAuthenticated$ | async)"
           class="btn btn-primary"

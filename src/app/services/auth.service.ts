@@ -5,26 +5,31 @@ import { tap } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../../environments/environment';
 
+export interface AppUser {
+  id: string | number;
+  email?: string;
+  phone?: string;
+  name?: string;
+  username?: string;
+  role?: 'admin' | 'user';
+  walletPoints?: number;
+}
+
 interface LoginResponse {
   token: string;
-  user: {
-    id: string;
-    email?: string;
-    phone?: string;
-    name?: string;
-  };
+  user: AppUser;
   message: string;
   success?: boolean;
 }
 
 interface RegisterResponse {
   message: string;
-  user: {
-    id: string;
-    email?: string;
-    phone?: string;
-    name?: string;
-  };
+  user: AppUser;
+}
+
+interface MeResponse {
+  success: boolean;
+  user: AppUser;
 }
 
 @Injectable({
@@ -34,12 +39,16 @@ export class AuthService {
   private tokenKey = 'token';
   private userKey = 'currentUser';
   private isAuthenticatedSubject: BehaviorSubject<boolean>;
+  private currentUserSubject: BehaviorSubject<AppUser | null>;
+  public currentUser$: Observable<AppUser | null>;
 
   constructor(
     private http: HttpClient,
     private cookieService: CookieService
   ) {
     this.isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
+    this.currentUserSubject = new BehaviorSubject<AppUser | null>(this.getUser());
+    this.currentUser$ = this.currentUserSubject.asObservable();
   }
 
   // Check if user is authenticated
@@ -89,6 +98,16 @@ export class AuthService {
     return this.http.post<RegisterResponse>(`${environment.apiUrl}/auth/register`, userData);
   }
 
+  refreshMe(): Observable<MeResponse> {
+    return this.http.get<MeResponse>(`${environment.apiUrl}/auth/me`).pipe(
+      tap(response => {
+        if (response.user) {
+          this.setUser(response.user);
+        }
+      })
+    );
+  }
+
   // Logout method
   logout(): void {
     this.removeToken();
@@ -105,6 +124,19 @@ export class AuthService {
   getUser(): any {
     const user = this.cookieService.get(this.userKey);
     return user ? JSON.parse(user) : null;
+  }
+
+  isAdmin(): boolean {
+    return this.getUser()?.role === 'admin';
+  }
+
+  updateWalletPoints(walletPoints: number): void {
+    const user = this.getUser();
+    if (!user) {
+      return;
+    }
+
+    this.setUser({ ...user, walletPoints });
   }
 
   // Private methods
@@ -128,6 +160,7 @@ export class AuthService {
       secure: window.location.protocol === 'https:',
       sameSite: 'Strict',
     });
+    this.currentUserSubject.next(user);
   }
 
   private removeToken(): void {
@@ -136,5 +169,6 @@ export class AuthService {
 
   private removeUser(): void {
     this.cookieService.delete(this.userKey, '/');
+    this.currentUserSubject.next(null);
   }
 }

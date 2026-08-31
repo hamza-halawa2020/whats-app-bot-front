@@ -8,6 +8,8 @@ interface MessageResponse {
   success: boolean;
   message: string;
   phone?: string;
+  pointsCharged?: number;
+  remainingPoints?: number;
 }
 
 interface BroadcastResponse {
@@ -20,6 +22,8 @@ interface BroadcastResponse {
   failedCount?: number;
   errors?: { phone: string; error: string }[];
   scheduleId?: number | string;
+  pointsCharged?: number;
+  remainingPoints?: number;
 }
 
 interface Schedule {

@@ -1,0 +1,108 @@
+<app-navbar />
+
+<main class="admin-page">
+  <section class="container">
+    <div class="page-head">
+      <div>
+        <span class="badge text-bg-dark">Admin</span>
+        <h1>Users</h1>
+        <p>Manage user points and wallet balances.</p>
+      </div>
+      <button class="btn btn-outline-primary" type="button" (click)="loadUsers()" [disabled]="isLoading">
+        Refresh
+      </button>
+    </div>
+
+    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+    <div class="create-box">
+      <h2>Create user</h2>
+      <div class="row g-2">
+        <div class="col-md-3">
+          <input class="form-control" type="text" [(ngModel)]="createUserForm.username" placeholder="Username" />
+        </div>
+        <div class="col-md-3">
+          <input class="form-control" type="email" [(ngModel)]="createUserForm.email" placeholder="Email" />
+        </div>
+        <div class="col-md-2">
+          <input class="form-control" type="text" [(ngModel)]="createUserForm.phone" placeholder="Phone" />
+        </div>
+        <div class="col-md-2">
+          <input class="form-control" type="password" [(ngModel)]="createUserForm.password" placeholder="Password" />
+        </div>
+        <div class="col-md-1">
+          <select class="form-select" [(ngModel)]="createUserForm.role">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div class="col-md-1">
+          <input class="form-control" type="number" min="0" [(ngModel)]="createUserForm.walletPoints" placeholder="Pts" />
+        </div>
+        <div class="col-12 d-grid d-md-flex justify-content-md-end">
+          <button class="btn btn-primary" type="button" (click)="createUser()">Create user</button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="selectedUser" class="action-box">
+      <div>
+        <h2>{{ action === 'credit' ? 'Add points' : 'Deduct points' }}</h2>
+        <p>{{ selectedUser.email || selectedUser.phone }}</p>
+      </div>
+      <div class="row g-2">
+        <div class="col-md-3">
+          <input class="form-control" type="number" min="1" [(ngModel)]="points" placeholder="Points" />
+        </div>
+        <div class="col-md-6">
+          <input class="form-control" type="text" [(ngModel)]="note" placeholder="Note" />
+        </div>
+        <div class="col-md-3 d-grid">
+          <button class="btn btn-primary" type="button" (click)="submitWalletAction()">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="users-box">
+      <div *ngIf="isLoading" class="text-secondary">Loading...</div>
+
+      <div *ngIf="!isLoading" class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Phone</th>
+              <th>Role</th>
+              <th>Points</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users">
+              <td>
+                <strong>{{ user.username || user.email }}</strong>
+                <div class="text-secondary small">{{ user.email }}</div>
+              </td>
+              <td>{{ user.phone || '-' }}</td>
+              <td><span class="badge text-bg-light">{{ user.role || 'user' }}</span></td>
+              <td class="fw-bold">{{ user.walletPoints || 0 }}</td>
+              <td>
+                <div class="d-flex flex-wrap gap-2">
+                  <button class="btn btn-sm btn-success" type="button" (click)="openWalletAction(user, 'credit')">
+                    Add
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger" type="button" (click)="openWalletAction(user, 'debit')">
+                    Deduct
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<app-footer />

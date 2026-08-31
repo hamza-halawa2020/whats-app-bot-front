@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { LoginComponent } from '../login/login.component.js';
-import { AuthService } from '../../services/auth.service';
+import { AppUser, AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -18,9 +18,11 @@ import { Observable } from 'rxjs';
 })
 export class NavbarComponent {
   isAuthenticated$: Observable<boolean>;
+  currentUser$: Observable<AppUser | null>;
 
   constructor(private router: Router, private authService: AuthService) {
     this.isAuthenticated$ = this.authService.isAuthenticated$();
+    this.currentUser$ = this.authService.currentUser$;
   }
 
   logout(): void {
