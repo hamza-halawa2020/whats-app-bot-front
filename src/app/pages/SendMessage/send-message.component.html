@@ -1,520 +1,208 @@
 <app-navbar />
-<section class="bg-primary position-relative">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12 col-md-12">
-        <h2 class="ipt-title text-light">WhatsApp Integration</h2>
-        <span class="ipn-subtitle">Manage your WhatsApp messages</span>
+
+<main class="bg-body-tertiary min-vh-100">
+  <section class="container py-5">
+    <div class="pt-5 mt-4">
+      <div class="mb-4">
+        <span class="badge text-bg-primary mb-2">Messages</span>
+        <h1 class="h2 fw-bold mb-1">Send WhatsApp Messages</h1>
+        <p class="text-secondary mb-0">Send a single message, start a broadcast, or manage schedules.</p>
       </div>
-    </div>
-  </div>
-  <div class="ht-30"></div>
-</section>
 
-<section class="gray-simple">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-8 col-md-10">
-        <div class="card rounded-3 shadow p-4">
-          <h4 class="mb-4">Send WhatsApp Messages</h4>
-          <div *ngIf="successMessage" class="alert alert-success text-center">
-            {{ successMessage }}
-          </div>
-          <div *ngIf="errorMessage" class="alert alert-danger text-center">
-            {{ errorMessage }}
-          </div>
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+          <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
 
-          <ul class="nav nav-tabs mb-4" id="messageTabs" role="tablist">
+          <ul class="nav nav-pills gap-2 mb-4" role="tablist">
             <li class="nav-item" role="presentation">
-              <button
-                class="nav-link"
-                [class.active]="activeTab === 'single'"
-                id="single-tab"
-                type="button"
-                (click)="setActiveTab('single')"
-              >
+              <button class="nav-link" [class.active]="activeTab === 'single'" type="button" (click)="setActiveTab('single')">
                 Single Message
               </button>
             </li>
             <li class="nav-item" role="presentation">
-              <button
-                class="nav-link"
-                [class.active]="activeTab === 'broadcast'"
-                id="broadcast-tab"
-                type="button"
-                (click)="setActiveTab('broadcast')"
-              >
+              <button class="nav-link" [class.active]="activeTab === 'broadcast'" type="button" (click)="setActiveTab('broadcast')">
                 Broadcast
               </button>
             </li>
             <li class="nav-item" role="presentation">
-              <button
-                class="nav-link"
-                [class.active]="activeTab === 'schedules'"
-                id="schedules-tab"
-                type="button"
-                (click)="setActiveTab('schedules')"
-              >
+              <button class="nav-link" [class.active]="activeTab === 'schedules'" type="button" (click)="setActiveTab('schedules')">
                 Schedules
               </button>
             </li>
           </ul>
 
-          <div class="tab-content" id="messageTabsContent">
-            <!-- Single Message Tab -->
-            <div
-              class="tab-pane fade"
-              [class.show]="activeTab === 'single'"
-              [class.active]="activeTab === 'single'"
-              id="single"
-              role="tabpanel"
-            >
-              <form [formGroup]="sendMessageForm" (ngSubmit)="sendMessage()">
-                <div class="mb-3">
-                  <label class="form-label">Input Type</label>
-                  <div class="d-flex gap-3">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        id="manualInput"
-                        value="manual"
-                        formControlName="inputType"
-                      />
-                      <label class="form-check-label" for="manualInput"
-                        >Enter Number</label
-                      >
-                    </div>
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="radio"
-                        id="clientInput"
-                        value="client"
-                        formControlName="inputType"
-                      />
-                      <label class="form-check-label" for="clientInput"
-                        >Select Client</label
-                      >
-                    </div>
+          <div *ngIf="activeTab === 'single'">
+            <form [formGroup]="sendMessageForm" (ngSubmit)="sendMessage()" class="row g-3">
+              <div class="col-12">
+                <label class="form-label fw-semibold">Input Type</label>
+                <div class="d-flex flex-wrap gap-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" id="manualInput" value="manual" formControlName="inputType" />
+                    <label class="form-check-label" for="manualInput">Enter Number</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" id="clientInput" value="client" formControlName="inputType" />
+                    <label class="form-check-label" for="clientInput">Select Client</label>
                   </div>
                 </div>
+              </div>
 
-                <div
-                  *ngIf="sendMessageForm.get('inputType')?.value === 'manual'"
-                  class="d-flex align-items-center gap-2"
-                >
-                  <div class="mb-3">
-                    <label for="countryCode" class="form-label"
-                      >Country Code</label
-                    >
-                    <select
-                      class="form-control"
-                      id="countryCode"
-                      formControlName="countryCode"
-                    >
-                      <option
-                        *ngFor="let country of countryCodes"
-                        [value]="country.code"
-                      >
-                        {{ country.name }} ({{ country.code }})
-                      </option>
-                    </select>
-                    <div
-                      *ngIf="
-                        sendMessageForm.get('countryCode')?.touched &&
-                        sendMessageForm.get('countryCode')?.invalid
-                      "
-                      class="text-danger"
-                    >
-                      <div
-                        *ngIf="sendMessageForm.get('countryCode')?.errors?.['required']"
-                      >
-                        Country code is required
-                      </div>
-                    </div>
-                  </div>
-                  <div class="mb-3 flex-grow-1">
-                    <label for="phone" class="form-label">Phone Number</label>
-                    <input
-                      type="tel"
-                      class="form-control"
-                      id="phone"
-                      formControlName="phone"
-                      placeholder="123456789"
-                    />
-                    <div
-                      *ngIf="
-                        sendMessageForm.get('phone')?.touched &&
-                        sendMessageForm.get('phone')?.invalid
-                      "
-                      class="text-danger"
-                    >
-                      <div
-                        *ngIf="sendMessageForm.get('phone')?.errors?.['required']"
-                      >
-                        Phone number is required
-                      </div>
-                      <div
-                        *ngIf="sendMessageForm.get('phone')?.errors?.['pattern']"
-                      >
-                        Phone number must be 10-15 digits
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  *ngIf="sendMessageForm.get('inputType')?.value === 'client'"
-                  class="mb-3"
-                >
-                  <label for="clientId" class="form-label">Select Client</label>
-                  <select
-                    class="form-control"
-                    id="clientId"
-                    formControlName="clientId"
-                  >
-                    <option value="">-- Select a client --</option>
-                    <option *ngFor="let client of clients" [value]="client.id">
-                      {{ client.phone }}
-                    </option>
+              <ng-container *ngIf="sendMessageForm.get('inputType')?.value === 'manual'">
+                <div class="col-md-5">
+                  <label for="countryCode" class="form-label fw-semibold">Country Code</label>
+                  <select class="form-select form-select-lg" id="countryCode" formControlName="countryCode">
+                    <option *ngFor="let country of countryCodes" [value]="country.code">{{ country.name }} ({{ country.code }})</option>
                   </select>
-                  <div
-                    *ngIf="
-                      sendMessageForm.get('clientId')?.touched &&
-                      sendMessageForm.get('clientId')?.invalid
-                    "
-                    class="text-danger"
-                  >
-                    <div
-                      *ngIf="sendMessageForm.get('clientId')?.errors?.['required']"
-                    >
-                      Client is required
-                    </div>
+                  <div *ngIf="sendMessageForm.get('countryCode')?.touched && sendMessageForm.get('countryCode')?.errors?.['required']" class="form-text text-danger">
+                    Country code is required
                   </div>
                 </div>
 
-                <div class="mb-3">
-                  <label for="message" class="form-label">Message</label>
-                  <textarea
-                    class="form-control"
-                    id="message"
-                    formControlName="message"
-                    placeholder="Enter your message"
-                  ></textarea>
-                  <div
-                    *ngIf="
-                      sendMessageForm.get('message')?.touched &&
-                      sendMessageForm.get('message')?.invalid
-                    "
-                    class="text-danger"
-                  >
-                    <div
-                      *ngIf="sendMessageForm.get('message')?.errors?.['required']"
-                    >
-                      Message is required
-                    </div>
+                <div class="col-md-7">
+                  <label for="phone" class="form-label fw-semibold">Phone Number</label>
+                  <input type="tel" class="form-control form-control-lg" id="phone" formControlName="phone" placeholder="123456789" />
+                  <div *ngIf="sendMessageForm.get('phone')?.touched && sendMessageForm.get('phone')?.errors?.['required']" class="form-text text-danger">
+                    Phone number is required
+                  </div>
+                  <div *ngIf="sendMessageForm.get('phone')?.touched && sendMessageForm.get('phone')?.errors?.['pattern']" class="form-text text-danger">
+                    Phone number must be 10-15 digits
                   </div>
                 </div>
-                <button
-                  type="submit"
-                  class="btn btn-primary full-width"
-                  [disabled]="sendMessageForm.invalid || isSendingMessage"
-                >
+              </ng-container>
+
+              <div *ngIf="sendMessageForm.get('inputType')?.value === 'client'" class="col-12">
+                <label for="clientId" class="form-label fw-semibold">Select Client</label>
+                <select class="form-select form-select-lg" id="clientId" formControlName="clientId">
+                  <option value="">Select a client</option>
+                  <option *ngFor="let client of clients" [value]="client.id">{{ client.phone }}</option>
+                </select>
+                <div *ngIf="sendMessageForm.get('clientId')?.touched && sendMessageForm.get('clientId')?.errors?.['required']" class="form-text text-danger">
+                  Client is required
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label for="message" class="form-label fw-semibold">Message</label>
+                <textarea class="form-control" id="message" rows="5" formControlName="message" placeholder="Enter your message"></textarea>
+                <div *ngIf="sendMessageForm.get('message')?.touched && sendMessageForm.get('message')?.errors?.['required']" class="form-text text-danger">
+                  Message is required
+                </div>
+              </div>
+
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="sendMessageForm.invalid || isSendingMessage">
                   <span *ngIf="!isSendingMessage">Send Message</span>
                   <span *ngIf="isSendingMessage">
-                    <span
-                      class="spinner-border spinner-border-sm me-2"
-                      role="status"
-                      aria-hidden="true"
-                    ></span>
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                     Sending...
                   </span>
                 </button>
-              </form>
-            </div>
+              </div>
+            </form>
+          </div>
 
-            <!-- Broadcast Tab -->
-            <div
-              class="tab-pane fade"
-              [class.show]="activeTab === 'broadcast'"
-              [class.active]="activeTab === 'broadcast'"
-              id="broadcast"
-              role="tabpanel"
-            >
-              <form [formGroup]="broadcastForm" (ngSubmit)="sendBroadcast()">
-                <div class="mb-3">
-                  <label for="phoneNumbers" class="form-label"
-                    >Phone Numbers (one per line, with country code)</label
-                  >
-                  <textarea
-                    class="form-control"
-                    id="phoneNumbers"
-                    formControlName="phoneNumbers"
-                    placeholder="+1234567890\n+0987654321"
-                    title="Enter one phone number per line, including country code."
-                  ></textarea>
-                  <div
-                    *ngIf="
-                      broadcastForm.get('phoneNumbers')?.touched &&
-                      broadcastForm.get('phoneNumbers')?.invalid
-                    "
-                    class="text-danger"
-                  >
-                    <div
-                      *ngIf="broadcastForm.get('phoneNumbers')?.errors?.['required']"
-                    >
-                      At least one phone number is required
-                    </div>
-                  </div>
+          <div *ngIf="activeTab === 'broadcast'">
+            <form [formGroup]="broadcastForm" (ngSubmit)="sendBroadcast()" class="row g-3">
+              <div class="col-md-6">
+                <label for="phoneNumbers" class="form-label fw-semibold">Phone Numbers</label>
+                <textarea class="form-control" id="phoneNumbers" rows="6" formControlName="phoneNumbers" placeholder="+1234567890&#10;+0987654321"></textarea>
+                <div class="form-text">One phone number per line, with country code.</div>
+                <div *ngIf="broadcastForm.get('phoneNumbers')?.touched && broadcastForm.get('phoneNumbers')?.errors?.['required']" class="form-text text-danger">
+                  At least one phone number is required
                 </div>
-                <div class="mb-3">
-                  <label for="messagePool" class="form-label"
-                    >Messages (one per line)</label
-                  >
-                  <textarea
-                    class="form-control"
-                    id="messagePool"
-                    formControlName="messagePool"
-                    placeholder="Hello!\nCheck our new offer!\nStay tuned!"
-                    title="Enter one message per line. Each client will receive a random message."
-                  ></textarea>
-                  <div
-                    *ngIf="
-                      broadcastForm.get('messagePool')?.touched &&
-                      broadcastForm.get('messagePool')?.invalid
-                    "
-                    class="text-danger"
-                  >
-                    <div
-                      *ngIf="broadcastForm.get('messagePool')?.errors?.['required']"
-                    >
-                      At least one message is required
-                    </div>
-                  </div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="messagePool" class="form-label fw-semibold">Messages</label>
+                <textarea class="form-control" id="messagePool" rows="6" formControlName="messagePool" placeholder="Hello!&#10;Check our new offer!"></textarea>
+                <div class="form-text">One message per line. A random one is used for each client.</div>
+                <div *ngIf="broadcastForm.get('messagePool')?.touched && broadcastForm.get('messagePool')?.errors?.['required']" class="form-text text-danger">
+                  At least one message is required
                 </div>
-                <div class="mb-3">
-                  <label for="batchSize" class="form-label"
-                    >Batch Size (messages per batch)</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="batchSize"
-                    formControlName="batchSize"
-                    placeholder="10"
-                    title="Number of messages to send in each batch (default: 10)"
-                  />
-                  <div
-                    *ngIf="
-                      broadcastForm.get('batchSize')?.touched &&
-                      broadcastForm.get('batchSize')?.invalid
-                    "
-                    class="text-danger"
-                  >
-                    <div
-                      *ngIf="broadcastForm.get('batchSize')?.errors?.['required']"
-                    >
-                      Batch size is required
-                    </div>
-                    <div
-                      *ngIf="broadcastForm.get('batchSize')?.errors?.['min']"
-                    >
-                      Batch size must be at least 1
-                    </div>
-                  </div>
+              </div>
+
+              <div class="col-md-3">
+                <label for="batchSize" class="form-label fw-semibold">Batch Size</label>
+                <input type="number" class="form-control" id="batchSize" formControlName="batchSize" placeholder="10" />
+              </div>
+              <div class="col-md-3">
+                <label for="intervalMs" class="form-label fw-semibold">Interval MS</label>
+                <input type="number" class="form-control" id="intervalMs" formControlName="intervalMs" placeholder="5000" />
+              </div>
+              <div class="col-md-3">
+                <label for="repeatIntervalMs" class="form-label fw-semibold">Repeat MS</label>
+                <input type="number" class="form-control" id="repeatIntervalMs" formControlName="repeatIntervalMs" placeholder="0" />
+              </div>
+              <div class="col-md-3">
+                <label for="repeatCount" class="form-label fw-semibold">Repeat Count</label>
+                <input type="number" class="form-control" id="repeatCount" formControlName="repeatCount" placeholder="0" />
+              </div>
+
+              <div class="col-12">
+                <div class="alert alert-warning mb-0">
+                  Use small batches and a clear interval to reduce WhatsApp blocking risk.
                 </div>
-                <div class="mb-3">
-                  <label for="intervalMs" class="form-label"
-                    >Interval Between Batches (milliseconds)</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="intervalMs"
-                    formControlName="intervalMs"
-                    placeholder="5000"
-                    title="Delay between batches in milliseconds (default: 5000)"
-                  />
-                  <div
-                    *ngIf="
-                      broadcastForm.get('intervalMs')?.touched &&
-                      broadcastForm.get('intervalMs')?.invalid
-                    "
-                    class="text-danger"
-                  >
-                    <div
-                      *ngIf="broadcastForm.get('intervalMs')?.errors?.['required']"
-                    >
-                      Interval is required
-                    </div>
-                    <div
-                      *ngIf="broadcastForm.get('intervalMs')?.errors?.['min']"
-                    >
-                      Interval must be at least 1000
-                    </div>
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <label for="repeatIntervalMs" class="form-label"
-                    >Repeat Interval (milliseconds, 0 for no repeat)</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="repeatIntervalMs"
-                    formControlName="repeatIntervalMs"
-                    placeholder="0"
-                    title="Interval for repeating messages (e.g., 3600000 for 1 hour, 0 for no repeat)"
-                  />
-                  <div
-                    *ngIf="
-                      broadcastForm.get('repeatIntervalMs')?.touched &&
-                      broadcastForm.get('repeatIntervalMs')?.invalid
-                    "
-                    class="text-danger"
-                  >
-                    <div
-                      *ngIf="broadcastForm.get('repeatIntervalMs')?.errors?.['min']"
-                    >
-                      Repeat interval must be 0 or greater
-                    </div>
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <label for="repeatCount" class="form-label"
-                    >Repeat Count (0 for indefinite)</label
-                  >
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="repeatCount"
-                    formControlName="repeatCount"
-                    placeholder="0"
-                    title="Number of times to repeat the messages (0 for indefinite)"
-                  />
-                  <div
-                    *ngIf="
-                      broadcastForm.get('repeatCount')?.touched &&
-                      broadcastForm.get('repeatCount')?.invalid
-                    "
-                    class="text-danger"
-                  >
-                    <div
-                      *ngIf="broadcastForm.get('repeatCount')?.errors?.['min']"
-                    >
-                      Repeat count must be 0 or greater
-                    </div>
-                  </div>
-                </div>
-                <div class="alert alert-danger">
-                  <strong>⚠️ Note:</strong> To avoid being flagged or blocked by
-                  WhatsApp, do not send too many messages at once. It is
-                  recommended to:
-                  <ul class="mb-0">
-                    <li>
-                      Use <strong>small batch sizes</strong> (e.g., 10–20)
-                    </li>
-                    <li>
-                      Set an
-                      <strong>interval of at least 5–10 seconds</strong> between
-                      batches
-                    </li>
-                    <li>
-                      Vary your messages and avoid sending identical content
-                      repeatedly
-                    </li>
-                  </ul>
-                </div>
-                <button
-                  type="submit"
-                  class="btn btn-primary full-width"
-                  [disabled]="broadcastForm.invalid || isSendingBroadcast"
-                >
+              </div>
+
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="broadcastForm.invalid || isSendingBroadcast">
                   <span *ngIf="!isSendingBroadcast">Send Broadcast</span>
                   <span *ngIf="isSendingBroadcast">
-                    <span
-                      class="spinner-border spinner-border-sm me-2"
-                      role="status"
-                      aria-hidden="true"
-                    ></span>
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                     Initiating...
                   </span>
                 </button>
-              </form>
-            </div>
+              </div>
+            </form>
+          </div>
 
-            <!-- Schedules Tab -->
-            <div
-              class="tab-pane fade"
-              [class.show]="activeTab === 'schedules'"
-              [class.active]="activeTab === 'schedules'"
-              id="schedules"
-              role="tabpanel"
-            >
-              <h5 class="mb-3">Scheduled Messages</h5>
-              <div *ngIf="schedules.length === 0" class="alert alert-info">
-                No scheduled messages found.
-              </div>
-              <div *ngIf="schedules.length > 0" class="table-responsive">
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>Schedule ID</th>
-                      <th>Phone Numbers</th>
-                      <th>Messages</th>
-                      <th>Interval</th>
-                      <th>Repeat Count</th>
-                      <th>Sent Count</th>
-                      <th>Status</th>
-                      <th>Last Sent</th>
-                      <th>Created At</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let schedule of schedules">
-                      <td>{{ schedule.id }}</td>
-                      <td>{{ schedule.phoneNumbers.join(", ") }}</td>
-                      <td>{{ schedule.messagePool.join(" | ") }}</td>
-                      <td>{{ schedule.intervalMs / 1000 }} seconds</td>
-                      <td>{{ schedule.repeatCount || "Indefinite" }}</td>
-                      <td>{{ schedule.sentCount }}</td>
-                      <td>{{ schedule.status }}</td>
-                      <td>
-                        {{
-                          schedule.lastSent
-                            ? (schedule.lastSent | date : "short")
-                            : "N/A"
-                        }}
-                      </td>
-                      <td>{{ schedule.createdAt | date : "short" }}</td>
-                      <td>
-                        <button
-                          *ngIf="schedule.status === 'active'"
-                          class="btn btn-warning btn-sm"
-                          (click)="toggleSchedule(schedule.id, 'pause')"
-                        >
-                          Pause
-                        </button>
-                        <button
-                          *ngIf="schedule.status === 'paused'"
-                          class="btn btn-success btn-sm"
-                          (click)="toggleSchedule(schedule.id, 'resume')"
-                        >
-                          Resume
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+          <div *ngIf="activeTab === 'schedules'">
+            <div *ngIf="schedules.length === 0" class="alert alert-info">No scheduled messages found.</div>
+            <div *ngIf="schedules.length > 0" class="table-responsive">
+              <table class="table table-striped table-hover align-middle">
+                <thead>
+                  <tr>
+                    <th>Schedule ID</th>
+                    <th>Phone Numbers</th>
+                    <th>Messages</th>
+                    <th>Interval</th>
+                    <th>Repeat</th>
+                    <th>Sent</th>
+                    <th>Status</th>
+                    <th>Last Sent</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let schedule of schedules">
+                    <td class="text-break">{{ schedule.id }}</td>
+                    <td class="text-break">{{ schedule.phoneNumbers.join(", ") }}</td>
+                    <td class="text-break">{{ schedule.messagePool.join(" | ") }}</td>
+                    <td>{{ schedule.intervalMs / 1000 }}s</td>
+                    <td>{{ schedule.repeatCount || "Indefinite" }}</td>
+                    <td>{{ schedule.sentCount }}</td>
+                    <td><span class="badge text-bg-light">{{ schedule.status }}</span></td>
+                    <td>{{ schedule.lastSent ? (schedule.lastSent | date : "short") : "N/A" }}</td>
+                    <td>{{ schedule.createdAt | date : "short" }}</td>
+                    <td>
+                      <button *ngIf="schedule.status === 'active'" class="btn btn-warning btn-sm" (click)="toggleSchedule(schedule.id, 'pause')">
+                        Pause
+                      </button>
+                      <button *ngIf="schedule.status === 'paused'" class="btn btn-success btn-sm" (click)="toggleSchedule(schedule.id, 'resume')">
+                        Resume
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+</main>
 
 <app-footer />

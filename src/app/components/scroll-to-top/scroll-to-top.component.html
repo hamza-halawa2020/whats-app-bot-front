@@ -1,1 +1,10 @@
-<a id="back2Top" (click)="topFunction($event)" class="top-scroll" [ngClass]="scroll ? 'd-block' : 'd-none'" title="Back to top" [routerLink]="[]"><i class="ti ti-arrow-up"></i></a>
+<button
+  type="button"
+  class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-4 shadow"
+  [ngClass]="scroll ? 'd-inline-flex' : 'd-none'"
+  title="Back to top"
+  aria-label="Back to top"
+  (click)="topFunction()"
+>
+  <i class="fa-solid fa-arrow-up"></i>
+</button>

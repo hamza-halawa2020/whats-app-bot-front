@@ -1,50 +1,50 @@
 <app-navbar />
-<section class="bg-primary position-relative">
-  <div class="container">
-    <div class="row align-items-center">
-      <div class="col-lg-8 col-md-8">
-        <h2 class="ipt-title text-light">All API Tokens</h2>
-        <span class="ipn-subtitle">List of your API tokens for WhatsApp messaging</span>
-      </div>
-      <div class="col-lg-4 col-md-4 text-end">
-        <button class="btn btn-light" (click)="generateApiToken()">Generate API Token</button>
-      </div>
-    </div>
-  </div>
-  <div class="ht-30"></div>
-</section>
 
-<section class="gray-simple">
-  <div class="container">
-    <div *ngIf="errorMessage" class="alert alert-danger text-center">{{ errorMessage }}</div>
-    <div *ngIf="successMessage" class="alert alert-success text-center">{{ successMessage }}</div>
-    <div class="row justify-content-center g-4">
-      <div *ngFor="let token of tokenData" class="col-xl-3 col-lg-4 col-md-6 col-sm-12">
-        <div class="clients-grid card rounded-3 shadow">
-          <div class="fr-grid-info d-flex align-items-center justify-content-between px-2 py-3">
-            <div class="fr-grid-sder">
-              <ul class="p-0">
-                <li class="mb-2">
-                  <strong>Token:</strong><span class="fw-medium text-primary ms-2">{{ token.name || ('Token #' + token.id) }}</span>
-                </li>
-                <li class="mb-2">
-                  <strong>Phone:</strong><span class="fw-medium text-primary ms-2">{{ token.phone }}</span>
-                </li>
-                <li>
-                  <strong>Created:</strong><span class="fw-medium text-primary ms-2">{{ token.createdAt | date: 'medium' }}</span>
-                </li>
-              </ul>
-            </div>
-            <div class="d-flex">
-              <button class="btn btn-sm btn-danger" (click)="revokeToken(token.id)">
-                Revoke
-              </button>
+<main class="bg-body-tertiary min-vh-100">
+  <section class="container py-5">
+    <div class="pt-5 mt-4">
+      <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+        <div>
+          <span class="badge text-bg-primary mb-2">API Tokens</span>
+          <h1 class="h2 fw-bold mb-1">All API Tokens</h1>
+          <p class="text-secondary mb-0">Generate and revoke tokens for WhatsApp messaging.</p>
+        </div>
+        <button class="btn btn-primary" (click)="generateApiToken()">
+          <i class="fa-solid fa-key me-2"></i>Generate API Token
+        </button>
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="alert alert-success text-break">{{ successMessage }}</div>
+
+      <div *ngIf="tokenData.length === 0 && !errorMessage" class="alert alert-info">
+        No tokens found.
+      </div>
+
+      <div class="row g-3">
+        <div *ngFor="let token of tokenData" class="col-xl-3 col-lg-4 col-md-6">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <div class="d-flex align-items-start justify-content-between gap-3">
+                <div class="text-break">
+                  <small class="text-secondary">Token</small>
+                  <h2 class="h6 fw-bold text-primary mb-3">{{ token.name || ('Token #' + token.id) }}</h2>
+                  <small class="text-secondary d-block">Phone</small>
+                  <span class="d-block mb-3">{{ token.phone }}</span>
+                  <small class="text-secondary d-block">Created</small>
+                  <span class="small">{{ token.createdAt | date: 'medium' }}</span>
+                </div>
+
+                <button class="btn btn-outline-danger btn-sm" (click)="revokeToken(token.id)">
+                  Revoke
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+</main>
 
 <app-footer />
