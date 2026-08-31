@@ -59,9 +59,8 @@ export class CreateAccountComponent {
 
       if (result) {
         this.signupError = null;
-        this.signupSuccess = 'Account created successfully. Sign in to continue.';
+        this.signupSuccess = 'Account created successfully. Please wait for admin approval.';
         this.signupForm.reset();
-        this.openLoginModal();
       }
     } catch (error: any) {
       this.signupSuccess = null;
