@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required, Validators.pattern(/^\+?[\d\s-]{10,20}$/)]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
@@ -82,19 +82,17 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     this.isSubmitting = true;
-    const { email, password } = this.loginForm.value;
-    console.log('Login attempt:', email, password);
+    const { phone, password } = this.loginForm.value;
 
-    this.authService.login({ email, password }).subscribe({
+    this.authService.login({ phone, password }).subscribe({
       next: (result) => {
-        console.log('Login result:', result);
         this.loginError = null;
         this.loginForm.reset();
         this.closeModal();
         this.router.navigate(['/clients']);
       },
       error: (error) => {
-        this.loginError = error.error?.error || 'Invalid email or password';
+        this.loginError = error.error?.error || 'Invalid phone or password';
         console.error('Login error:', error);
         this.isSubmitting = false;
       },

@@ -16,6 +16,51 @@
     <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
     <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
 
+    <div class="settings-box">
+      <div class="settings-head">
+        <div>
+          <h2>Platform settings</h2>
+          <p>Control verification gifts, message pricing, and daily sending limits.</p>
+        </div>
+        <button class="btn btn-primary" type="button" (click)="saveSettings()" [disabled]="isSavingSettings">
+          {{ isSavingSettings ? 'Saving...' : 'Save settings' }}
+        </button>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label" for="signupGiftPoints">Signup gift points</label>
+          <input
+            class="form-control"
+            id="signupGiftPoints"
+            type="number"
+            min="0"
+            [(ngModel)]="settingsForm.signupGiftPoints"
+          />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="messagePointCost">Message cost</label>
+          <input
+            class="form-control"
+            id="messagePointCost"
+            type="number"
+            min="1"
+            [(ngModel)]="settingsForm.messagePointCost"
+          />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="dailyMessageLimit">Daily message limit</label>
+          <input
+            class="form-control"
+            id="dailyMessageLimit"
+            type="number"
+            min="0"
+            [(ngModel)]="settingsForm.dailyMessageLimit"
+          />
+          <div class="form-text">Use 0 for unlimited.</div>
+        </div>
+      </div>
+    </div>
+
     <div class="create-box">
       <h2>Create user</h2>
       <div class="row g-2">

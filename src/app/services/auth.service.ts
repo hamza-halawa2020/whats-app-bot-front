@@ -26,6 +26,8 @@ interface LoginResponse {
 interface RegisterResponse {
   message: string;
   user: AppUser;
+  otpExpiresAt?: string;
+  otpDebugCode?: string;
 }
 
 interface MeResponse {
@@ -79,7 +81,7 @@ export class AuthService {
   }
 
   // Signup method (added to match local service)
-  signup(credentials: { email: string; username: string; password?: string; phone: string }): Observable<any> {
+  signup(credentials: { username?: string; name?: string; email?: string; password?: string; phone: string; countryCode?: string }): Observable<any> {
     return this.http.post<any>(`${environment.apiUrl}/auth/signup`, credentials)
       .pipe(
         tap(response => {
@@ -95,8 +97,22 @@ export class AuthService {
   }
 
   // Register method
-  register(userData: { phone: string; name?: string; email?: string; password?: string }): Observable<RegisterResponse> {
+  register(userData: { phone: string; countryCode?: string; name?: string; email?: string; password?: string }): Observable<RegisterResponse> {
     return this.http.post<RegisterResponse>(`${environment.apiUrl}/auth/register`, userData);
+  }
+
+  verifyOtp(data: { phone: string; code: string; countryCode?: string }): Observable<{ success: boolean; message: string; user: AppUser }> {
+    return this.http.post<{ success: boolean; message: string; user: AppUser }>(
+      `${environment.apiUrl}/auth/verify-otp`,
+      data
+    );
+  }
+
+  resendOtp(data: { phone: string; countryCode?: string }): Observable<{ success: boolean; message: string; otpExpiresAt?: string; otpDebugCode?: string }> {
+    return this.http.post<{ success: boolean; message: string; otpExpiresAt?: string; otpDebugCode?: string }>(
+      `${environment.apiUrl}/auth/resend-otp`,
+      data
+    );
   }
 
   refreshMe(): Observable<MeResponse> {

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { AppUser } from '../../services/auth.service';
-import { WalletService } from '../../services/wallet.service';
+import { AppSettings, WalletService } from '../../services/wallet.service';
 
 @Component({
   selector: 'app-admin-users',
@@ -21,8 +21,14 @@ export class AdminUsersComponent implements OnInit {
   note = '';
   action: 'credit' | 'debit' = 'credit';
   isLoading = false;
+  isSavingSettings = false;
   errorMessage: string | null = null;
   successMessage: string | null = null;
+  settingsForm: AppSettings = {
+    signupGiftPoints: 0,
+    messagePointCost: 1,
+    dailyMessageLimit: 0,
+  };
   createUserForm = {
     username: '',
     email: '',
@@ -45,6 +51,46 @@ export class AdminUsersComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUsers();
+    this.loadSettings();
+  }
+
+  loadSettings(): void {
+    this.walletService.getAdminSettings().subscribe({
+      next: (response) => {
+        this.settingsForm = response.settings;
+      },
+      error: (error) => {
+        this.errorMessage = error.error?.error || 'Failed to load settings';
+      },
+    });
+  }
+
+  saveSettings(): void {
+    if (
+      this.settingsForm.signupGiftPoints < 0 ||
+      this.settingsForm.messagePointCost < 1 ||
+      this.settingsForm.dailyMessageLimit < 0
+    ) {
+      this.errorMessage = 'Check settings values';
+      return;
+    }
+
+    this.isSavingSettings = true;
+    this.errorMessage = null;
+    this.successMessage = null;
+
+    this.walletService.updateAdminSettings(this.settingsForm).subscribe({
+      next: (response) => {
+        this.settingsForm = response.settings;
+        this.successMessage = response.message;
+      },
+      error: (error) => {
+        this.errorMessage = error.error?.error || 'Failed to save settings';
+      },
+      complete: () => {
+        this.isSavingSettings = false;
+      },
+    });
   }
 
   loadUsers(): void {

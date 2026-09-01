@@ -26,6 +26,7 @@
 
 .create-box,
 .action-box,
+.settings-box,
 .users-box {
   border: 1px solid #e5e7eb;
   border-radius: 8px;
@@ -34,15 +35,30 @@
 }
 
 .create-box,
-.action-box {
+.action-box,
+.settings-box {
   margin-bottom: 18px;
 }
 
 .create-box h2,
-.action-box h2 {
+.action-box h2,
+.settings-box h2 {
   margin: 0 0 4px;
   font-size: 1.2rem;
   font-weight: 750;
+}
+
+.settings-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.settings-head p {
+  margin: 0;
+  color: #667085;
 }
 
 .action-box p {
@@ -53,6 +69,10 @@
 @media (max-width: 767px) {
   .page-head {
     align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .settings-head {
     flex-direction: column;
   }
 }

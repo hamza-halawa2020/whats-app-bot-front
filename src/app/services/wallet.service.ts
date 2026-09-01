@@ -49,6 +49,12 @@ export interface WalletActionResponse {
   walletPoints: number;
 }
 
+export interface AppSettings {
+  signupGiftPoints: number;
+  messagePointCost: number;
+  dailyMessageLimit: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -99,6 +105,27 @@ export class WalletService {
     return this.http.post<WalletActionResponse>(
       `${this.apiUrl}/admin/users/${userId}/wallet/debit`,
       { points, note }
+    );
+  }
+
+  getAdminSettings(): Observable<{ success: boolean; settings: AppSettings }> {
+    return this.http.get<{ success: boolean; settings: AppSettings }>(
+      `${this.apiUrl}/admin/settings`
+    );
+  }
+
+  getSettings(): Observable<{ success: boolean; settings: AppSettings }> {
+    return this.http.get<{ success: boolean; settings: AppSettings }>(
+      `${this.apiUrl}/settings`
+    );
+  }
+
+  updateAdminSettings(
+    payload: Partial<AppSettings>
+  ): Observable<{ success: boolean; message: string; settings: AppSettings }> {
+    return this.http.patch<{ success: boolean; message: string; settings: AppSettings }>(
+      `${this.apiUrl}/admin/settings`,
+      payload
     );
   }
 }

@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { AuthService } from '../../services/auth.service';
+import { CountryCodeSelectComponent } from '../../components/country-code-select/country-code-select.component';
 
 declare var bootstrap: any;
 
@@ -16,6 +17,7 @@ declare var bootstrap: any;
     ReactiveFormsModule,
     NavbarComponent,
     FooterComponent,
+    CountryCodeSelectComponent,
 
   ],
   templateUrl: './create-account.component.html',
@@ -23,9 +25,14 @@ declare var bootstrap: any;
 })
 export class CreateAccountComponent {
   signupForm: FormGroup;
+  otpForm: FormGroup;
   signupError: string | null = null;
   signupSuccess: string | null = null;
   isSubmitting: boolean = false;
+  isVerifying: boolean = false;
+  isResending: boolean = false;
+  pendingPhone: string | null = null;
+  pendingCountryCode: string | null = null;
   showPassword: boolean = false;
 
   constructor(
@@ -33,10 +40,13 @@ export class CreateAccountComponent {
     private authService: AuthService
   ) {
     this.signupForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
       name: ['', [Validators.required, Validators.minLength(3)]],
+      countryCode: ['EG', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      phone: ['', [Validators.required, Validators.pattern(/^\d{10,15}$/)]],
+      phone: ['', [Validators.required, Validators.pattern(/^[\d\s-]{6,20}$/)]],
+    });
+    this.otpForm = this.fb.group({
+      code: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
     });
   }
 
@@ -50,17 +60,18 @@ export class CreateAccountComponent {
     }
 
     this.isSubmitting = true;
-    const { email, name, password, phone } = this.signupForm.value;
-    console.log('Signup attempt:', { email, name, password, phone });
+    const { name, password, phone, countryCode } = this.signupForm.value;
 
     try {
-      const result = await this.authService.register({ email, name, password, phone }).toPromise();
-      console.log('Signup result:', result);
+      const result = await this.authService.register({ name, password, phone, countryCode }).toPromise();
 
       if (result) {
         this.signupError = null;
-        this.signupSuccess = 'Account created successfully. Please wait for admin approval.';
-        this.signupForm.reset();
+        this.pendingPhone = phone;
+        this.pendingCountryCode = countryCode;
+        this.signupSuccess = result.otpDebugCode
+          ? `OTP sent to your WhatsApp. Test code: ${result.otpDebugCode}`
+          : 'OTP sent to your WhatsApp.';
       }
     } catch (error: any) {
       this.signupSuccess = null;
@@ -68,6 +79,63 @@ export class CreateAccountComponent {
       console.error('Signup error:', error);
     } finally {
       this.isSubmitting = false;
+    }
+  }
+
+  async onVerifyOtp(): Promise<void> {
+    if (this.isVerifying || this.otpForm.invalid || !this.pendingPhone) {
+      this.signupError = this.otpForm.invalid
+        ? 'Enter the 6-digit OTP sent to your WhatsApp'
+        : null;
+      return;
+    }
+
+    this.isVerifying = true;
+    this.signupError = null;
+
+    try {
+      const result = await this.authService.verifyOtp({
+        phone: this.pendingPhone,
+        countryCode: this.pendingCountryCode || undefined,
+        code: this.otpForm.value.code,
+      }).toPromise();
+
+      if (result) {
+        this.signupSuccess = 'Account verified successfully. You can sign in now.';
+        this.signupForm.reset();
+        this.otpForm.reset();
+        this.pendingPhone = null;
+        this.pendingCountryCode = null;
+      }
+    } catch (error: any) {
+      this.signupSuccess = null;
+      this.signupError = error.error?.error || 'Invalid verification code';
+    } finally {
+      this.isVerifying = false;
+    }
+  }
+
+  async resendOtp(): Promise<void> {
+    if (this.isResending || !this.pendingPhone) {
+      return;
+    }
+
+    this.isResending = true;
+    this.signupError = null;
+
+    try {
+      const result = await this.authService.resendOtp({
+        phone: this.pendingPhone,
+        countryCode: this.pendingCountryCode || undefined,
+      }).toPromise();
+      this.signupSuccess = result?.otpDebugCode
+        ? `New OTP sent to your WhatsApp. Test code: ${result.otpDebugCode}`
+        : 'New OTP sent to your WhatsApp.';
+    } catch (error: any) {
+      this.signupSuccess = null;
+      this.signupError = error.error?.error || 'Failed to resend OTP';
+    } finally {
+      this.isResending = false;
     }
   }
 
@@ -82,4 +150,5 @@ export class CreateAccountComponent {
       modal.show();
     }
   }
+
 }

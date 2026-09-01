@@ -1,4 +1,4 @@
-<div class="modal fade" id="login" tabindex="-1" aria-labelledby="loginTitle" aria-hidden="true">
+﻿<div class="modal fade" id="login" tabindex="-1" aria-labelledby="loginTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 rounded-3 shadow">
             <div class="modal-header border-0 pb-0">
@@ -15,19 +15,19 @@
             <div class="modal-body p-4">
                 <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="row g-3">
                     <div class="col-12">
-                        <label for="loginEmail" class="form-label fw-semibold">Email</label>
+                        <label for="loginPhone" class="form-label fw-semibold">WhatsApp phone</label>
                         <input
-                            id="loginEmail"
-                            type="email"
+                            id="loginPhone"
+                            type="tel"
                             class="form-control form-control-lg"
-                            formControlName="email"
-                            placeholder="name@example.com"
+                            formControlName="phone"
+                            placeholder="201001234567"
                         />
-                        <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['required']" class="form-text text-danger">
-                            Email is required
+                        <div *ngIf="loginForm.get('phone')?.touched && loginForm.get('phone')?.errors?.['required']" class="form-text text-danger">
+                            WhatsApp phone is required
                         </div>
-                        <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['email']" class="form-text text-danger">
-                            Enter a valid email
+                        <div *ngIf="loginForm.get('phone')?.touched && loginForm.get('phone')?.errors?.['pattern']" class="form-text text-danger">
+                            Phone number must be 10-15 digits
                         </div>
                     </div>
 
@@ -74,3 +74,4 @@
         </div>
     </div>
 </div>
+

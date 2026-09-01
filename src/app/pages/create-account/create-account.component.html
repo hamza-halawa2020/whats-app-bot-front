@@ -1,4 +1,4 @@
-<app-navbar></app-navbar>
+﻿<app-navbar></app-navbar>
 
 <main class="bg-body-tertiary">
     <section class="container min-vh-100 d-flex align-items-center py-5">
@@ -11,24 +11,24 @@
                     </a>
                 </div>
 
-                <span class="badge text-bg-success mb-3">Start in minutes</span>
+                <span class="badge text-bg-success mb-3">WhatsApp verification</span>
                 <h1 class="display-6 fw-bold text-dark mb-3">Create your messaging workspace.</h1>
                 <p class="lead text-secondary mb-4">
-                    Save your clients, connect WhatsApp with a QR code, and send messages from a clean dashboard.
+                    Choose your country, enter your local WhatsApp number, and receive your verification code there.
                 </p>
 
                 <ul class="list-group list-group-flush rounded-3 overflow-hidden shadow-sm">
                     <li class="list-group-item d-flex align-items-center gap-2">
                         <span class="badge rounded-pill text-bg-success"><i class="fa-solid fa-check"></i></span>
-                        No complicated setup
+                        No email required
                     </li>
                     <li class="list-group-item d-flex align-items-center gap-2">
                         <span class="badge rounded-pill text-bg-success"><i class="fa-solid fa-check"></i></span>
-                        Clients and groups in one place
+                        OTP sent on WhatsApp
                     </li>
                     <li class="list-group-item d-flex align-items-center gap-2">
                         <span class="badge rounded-pill text-bg-success"><i class="fa-solid fa-check"></i></span>
-                        Dashboard and API sending
+                        Sign in after verification
                     </li>
                 </ul>
             </div>
@@ -38,10 +38,10 @@
                     <div class="card-body p-4 p-md-5">
                         <div class="mb-4">
                             <h2 class="fw-bold mb-1" id="signupTitle">Create account</h2>
-                            <p class="text-secondary mb-0">Enter your details to open the dashboard.</p>
+                            <p class="text-secondary mb-0">Choose your country code and enter your local WhatsApp number.</p>
                         </div>
 
-                        <form [formGroup]="signupForm" (ngSubmit)="onSignup()" class="row g-3" aria-labelledby="signupTitle">
+                        <form *ngIf="!pendingPhone" [formGroup]="signupForm" (ngSubmit)="onSignup()" class="row g-3" aria-labelledby="signupTitle">
                             <div class="col-md-6">
                                 <label for="signupName" class="form-label fw-semibold">Name</label>
                                 <input
@@ -60,40 +60,30 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="signupEmail" class="form-label fw-semibold">Email</label>
-                                <input
-                                    id="signupEmail"
-                                    type="email"
-                                    class="form-control form-control-lg"
-                                    formControlName="email"
-                                    placeholder="name@example.com"
-                                />
-                                <div *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.errors?.['required']" class="form-text text-danger">
-                                    Email is required
-                                </div>
-                                <div *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.errors?.['email']" class="form-text text-danger">
-                                    Enter a valid email
-                                </div>
+                                <app-country-code-select
+                                    formControlName="countryCode"
+                                    selectId="signupCountry"
+                                ></app-country-code-select>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="signupPhone" class="form-label fw-semibold">Phone</label>
+                                <label for="signupPhone" class="form-label fw-semibold">Local WhatsApp number</label>
                                 <input
                                     id="signupPhone"
                                     type="tel"
                                     class="form-control form-control-lg"
                                     formControlName="phone"
-                                    placeholder="201001234567"
+                                    placeholder="01001234567"
                                 />
                                 <div *ngIf="signupForm.get('phone')?.touched && signupForm.get('phone')?.errors?.['required']" class="form-text text-danger">
-                                    Phone number is required
+                                    WhatsApp phone is required
                                 </div>
                                 <div *ngIf="signupForm.get('phone')?.touched && signupForm.get('phone')?.errors?.['pattern']" class="form-text text-danger">
-                                    Phone number must be 10-15 digits
+                                    Enter your local phone number without country code
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-12">
                                 <label for="signupPassword" class="form-label fw-semibold">Password</label>
                                 <div class="input-group input-group-lg">
                                     <input
@@ -125,7 +115,45 @@
 
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="signupForm.invalid || isSubmitting">
-                                    {{ isSubmitting ? 'Creating account...' : 'Create account' }}
+                                    {{ isSubmitting ? 'Sending OTP...' : 'Create account' }}
+                                </button>
+                            </div>
+                        </form>
+
+                        <form *ngIf="pendingPhone" [formGroup]="otpForm" (ngSubmit)="onVerifyOtp()" class="row g-3" aria-labelledby="signupTitle">
+                            <div class="col-12">
+                                <label for="otpCode" class="form-label fw-semibold">Verification code</label>
+                                <input
+                                    id="otpCode"
+                                    type="text"
+                                    inputmode="numeric"
+                                    maxlength="6"
+                                    class="form-control form-control-lg text-center"
+                                    formControlName="code"
+                                    placeholder="000000"
+                                />
+                                <div *ngIf="otpForm.get('code')?.touched && otpForm.get('code')?.errors" class="form-text text-danger">
+                                    Enter the 6-digit code
+                                </div>
+                            </div>
+
+                            <div *ngIf="signupSuccess" class="col-12">
+                                <div class="alert alert-success mb-0">{{ signupSuccess }}</div>
+                            </div>
+
+                            <div *ngIf="signupError" class="col-12">
+                                <div class="alert alert-danger mb-0">{{ signupError }}</div>
+                            </div>
+
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="otpForm.invalid || isVerifying">
+                                    {{ isVerifying ? 'Verifying...' : 'Verify account' }}
+                                </button>
+                            </div>
+
+                            <div class="col-12 text-center">
+                                <button type="button" class="btn btn-link fw-semibold p-0" (click)="resendOtp()" [disabled]="isResending">
+                                    {{ isResending ? 'Sending...' : 'Resend code' }}
                                 </button>
                             </div>
                         </form>
@@ -144,3 +172,7 @@
 </main>
 
 <app-footer></app-footer>
+
+
+
+

@@ -1,0 +1,40 @@
+<label [for]="selectId" class="form-label fw-semibold">{{ label }}</label>
+<div class="country-select" [class.is-open]="isOpen">
+    <button
+        [id]="selectId"
+        type="button"
+        class="form-select form-select-lg country-select-toggle text-start"
+        [disabled]="disabled"
+        (click)="toggleOpen()"
+    >
+        <span>{{ selectedCountry.name }}</span>
+        <span class="text-secondary">{{ selectedCountry.dialCode }}</span>
+    </button>
+
+    <div *ngIf="isOpen" class="country-select-menu shadow-sm">
+        <input
+            type="search"
+            class="form-control form-control-lg country-select-search"
+            [(ngModel)]="countrySearch"
+            [placeholder]="searchPlaceholder"
+            autofocus
+        />
+
+        <div class="country-select-options">
+            <button
+                *ngFor="let country of filteredCountries"
+                type="button"
+                class="country-select-option"
+                [class.active]="country.code === value"
+                (click)="updateValue(country.code)"
+            >
+                <span>{{ country.name }}</span>
+                <span>{{ country.dialCode }}</span>
+            </button>
+
+            <div *ngIf="filteredCountries.length === 0" class="country-select-empty">
+                No countries found
+            </div>
+        </div>
+    </div>
+</div>

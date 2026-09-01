@@ -12,6 +12,7 @@ import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { COUNTRY_CODES, CountryCode } from '../clients/country-codes';
 import { AuthService } from '../../services/auth.service';
+import { WalletService } from '../../services/wallet.service';
 import { RouterLink } from '@angular/router';
 
 interface ClientData {
@@ -62,11 +63,14 @@ export class SendMessageComponent implements OnInit {
   pageSize: number = 100;
   totalPages: number = 0;
   walletPoints: number = 0;
+  messagePointCost: number = 1;
+  dailyMessageLimit: number = 0;
 
   constructor(
     private sendMessageService: SendMessageService,
     private clientsService: ClientsService,
     private authService: AuthService,
+    private walletService: WalletService,
     private fb: FormBuilder
   ) {
     this.sendMessageForm = this.fb.group({
@@ -91,7 +95,17 @@ export class SendMessageComponent implements OnInit {
     this.loadClients();
     this.loadSchedules();
     this.loadUserWallet();
+    this.loadSettings();
     this.setupSendMessageFormListeners();
+  }
+
+  loadSettings(): void {
+    this.walletService.getSettings().subscribe({
+      next: (response) => {
+        this.messagePointCost = response.settings.messagePointCost || 1;
+        this.dailyMessageLimit = response.settings.dailyMessageLimit || 0;
+      },
+    });
   }
 
   loadUserWallet(): void {
@@ -189,8 +203,20 @@ export class SendMessageComponent implements OnInit {
     this.successMessage = null;
   }
 
+  getBroadcastPhoneCount(): number {
+    const phoneNumbers = this.broadcastForm.get('phoneNumbers')?.value || '';
+    return phoneNumbers
+      .split('\n')
+      .map((phone: string) => phone.trim())
+      .filter((phone: string) => phone).length;
+  }
+
+  getBroadcastRequiredPoints(): number {
+    return this.getBroadcastPhoneCount() * this.messagePointCost;
+  }
+
   sendMessage(): void {
-    if (this.walletPoints <= 0) {
+    if (this.walletPoints < this.messagePointCost) {
       this.errorMessage = 'You do not have enough points to send messages.';
       return;
     }
@@ -275,8 +301,9 @@ export class SendMessageComponent implements OnInit {
       return;
     }
 
-    if (phones.length > this.walletPoints) {
-      this.errorMessage = `You need ${phones.length} points for this broadcast. Available: ${this.walletPoints}.`;
+    const requiredPoints = phones.length * this.messagePointCost;
+    if (requiredPoints > this.walletPoints) {
+      this.errorMessage = `You need ${requiredPoints} points for this broadcast. Available: ${this.walletPoints}.`;
       this.isSendingBroadcast = false;
       return;
     }
