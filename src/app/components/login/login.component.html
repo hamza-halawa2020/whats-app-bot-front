@@ -1,19 +1,23 @@
-﻿<div class="modal fade" id="login" tabindex="-1" aria-labelledby="loginTitle" aria-hidden="true">
+<div class="modal fade" id="login" tabindex="-1" aria-labelledby="loginTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 rounded-3 shadow">
             <div class="modal-header border-0 pb-0">
                 <div class="d-flex align-items-center gap-2">
                     <img src="/assets/img/whatsapp-sender-logo.svg" alt="WhatsApp Sender" width="40" height="40" />
                     <div>
-                        <h5 class="modal-title fw-bold" id="loginTitle">Sign in</h5>
-                        <small class="text-secondary">Continue to your dashboard</small>
+                        <h5 class="modal-title fw-bold" id="loginTitle">
+                            {{ authMode === 'login' ? 'Sign in' : authMode === 'forgot' ? 'Reset password' : 'Enter reset code' }}
+                        </h5>
+                        <small class="text-secondary">
+                            {{ authMode === 'login' ? 'Continue to your dashboard' : 'Use your WhatsApp phone to continue' }}
+                        </small>
                     </div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body p-4">
-                <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="row g-3">
+                <form *ngIf="authMode === 'login'" [formGroup]="loginForm" (ngSubmit)="onLogin()" class="row g-3">
                     <div class="col-12">
                         <label for="loginPhone" class="form-label fw-semibold">WhatsApp phone</label>
                         <input
@@ -56,15 +60,111 @@
                     <div *ngIf="loginError" class="col-12">
                         <div class="alert alert-danger mb-0">{{ loginError }}</div>
                     </div>
+                    <div *ngIf="loginSuccess" class="col-12">
+                        <div class="alert alert-success mb-0">{{ loginSuccess }}</div>
+                    </div>
 
                     <div class="col-12">
                         <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="loginForm.invalid || isSubmitting">
                             {{ isSubmitting ? 'Signing in...' : 'Sign in' }}
                         </button>
                     </div>
+
+                    <div class="col-12 text-center">
+                        <button type="button" class="btn btn-link fw-semibold p-0" (click)="setAuthMode('forgot')">
+                            Forgot password?
+                        </button>
+                    </div>
                 </form>
 
-                <p class="text-center text-secondary mt-4 mb-0">
+                <form *ngIf="authMode === 'forgot'" [formGroup]="forgotForm" (ngSubmit)="requestPasswordReset()" class="row g-3">
+                    <div class="col-md-5">
+                        <app-country-code-select
+                            formControlName="countryCode"
+                            selectId="forgotCountry"
+                        ></app-country-code-select>
+                    </div>
+
+                    <div class="col-md-7">
+                        <label for="forgotPhone" class="form-label fw-semibold">WhatsApp phone</label>
+                        <input
+                            id="forgotPhone"
+                            type="tel"
+                            class="form-control form-control-lg"
+                            formControlName="phone"
+                            placeholder="01001234567"
+                        />
+                    </div>
+
+                    <div *ngIf="loginError" class="col-12">
+                        <div class="alert alert-danger mb-0">{{ loginError }}</div>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="forgotForm.invalid || isSendingResetOtp">
+                            {{ isSendingResetOtp ? 'Sending...' : 'Send reset code' }}
+                        </button>
+                    </div>
+
+                    <div class="col-12 text-center">
+                        <button type="button" class="btn btn-link fw-semibold p-0" (click)="setAuthMode('login')">
+                            Back to sign in
+                        </button>
+                    </div>
+                </form>
+
+                <form *ngIf="authMode === 'reset'" [formGroup]="resetPasswordForm" (ngSubmit)="resetPassword()" class="row g-3">
+                    <div *ngIf="loginSuccess" class="col-12">
+                        <div class="alert alert-success mb-0">{{ loginSuccess }}</div>
+                    </div>
+
+                    <div class="col-12">
+                        <label for="resetCode" class="form-label fw-semibold">Verification code</label>
+                        <input
+                            id="resetCode"
+                            type="text"
+                            inputmode="numeric"
+                            maxlength="6"
+                            class="form-control form-control-lg text-center"
+                            formControlName="code"
+                            placeholder="000000"
+                        />
+                    </div>
+
+                    <div class="col-12">
+                        <label for="resetPassword" class="form-label fw-semibold">New password</label>
+                        <div class="input-group input-group-lg">
+                            <input
+                                id="resetPassword"
+                                [type]="showResetPassword ? 'text' : 'password'"
+                                class="form-control"
+                                formControlName="password"
+                                placeholder="At least 6 characters"
+                            />
+                            <button class="btn btn-outline-secondary" type="button" (click)="toggleResetPasswordVisibility()" aria-label="Toggle password visibility">
+                                <i [class]="showResetPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div *ngIf="loginError" class="col-12">
+                        <div class="alert alert-danger mb-0">{{ loginError }}</div>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary btn-lg w-100" [disabled]="resetPasswordForm.invalid || isResettingPassword">
+                            {{ isResettingPassword ? 'Resetting...' : 'Reset password' }}
+                        </button>
+                    </div>
+
+                    <div class="col-12 text-center">
+                        <button type="button" class="btn btn-link fw-semibold p-0" (click)="setAuthMode('forgot')">
+                            Send another code
+                        </button>
+                    </div>
+                </form>
+
+                <p *ngIf="authMode === 'login'" class="text-center text-secondary mt-4 mb-0">
                     New here?
                     <button type="button" class="btn btn-link fw-semibold p-0 align-baseline" (click)="navigateToRegister()">
                         Create account
@@ -74,4 +174,3 @@
         </div>
     </div>
 </div>
-

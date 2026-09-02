@@ -115,6 +115,20 @@ export class AuthService {
     );
   }
 
+  forgotPassword(data: { phone: string; countryCode?: string }): Observable<{ success: boolean; message: string; otpExpiresAt?: string; otpDebugCode?: string }> {
+    return this.http.post<{ success: boolean; message: string; otpExpiresAt?: string; otpDebugCode?: string }>(
+      `${environment.apiUrl}/auth/forgot-password`,
+      data
+    );
+  }
+
+  resetPassword(data: { phone: string; countryCode?: string; code: string; password: string }): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(
+      `${environment.apiUrl}/auth/reset-password`,
+      data
+    );
+  }
+
   refreshMe(): Observable<MeResponse> {
     return this.http.get<MeResponse>(`${environment.apiUrl}/auth/me`).pipe(
       tap(response => {
@@ -154,6 +168,19 @@ export class AuthService {
     }
 
     this.setUser({ ...user, walletPoints });
+  }
+
+  updateProfile(data: { username?: string; email?: string | null; password?: string }): Observable<{ success: boolean; message: string; user: AppUser }> {
+    return this.http.patch<{ success: boolean; message: string; user: AppUser }>(
+      `${environment.apiUrl}/auth/me`,
+      data
+    ).pipe(
+      tap(response => {
+        if (response.user) {
+          this.setUser(response.user);
+        }
+      })
+    );
   }
 
   // Private methods
