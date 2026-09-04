@@ -7,13 +7,6 @@
     z-index: 1040;
 }
 
-:host {
-    display: block;
-    position: sticky;
-    top: 0;
-    z-index: 1040;
-}
-
 .navbar-brand img {
     flex: 0 0 auto;
 }

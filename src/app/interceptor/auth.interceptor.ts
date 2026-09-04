@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import {
-  HttpRequest,
-  HttpHandler,
+  HttpErrorResponse,
   HttpEvent,
+  HttpHandler,
   HttpInterceptor,
+  HttpRequest,
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, switchMap, throwError } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthService } from '../services/auth.service';
 
@@ -20,29 +21,45 @@ export class AuthInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    console.log(`Interceptor processing request: ${request.urlWithParams}`);
-    
-    // Try to get token from AuthService first, then fallback to cookies
     let token = this.authService.getToken();
     if (!token) {
       token = this.cookieService.get('token');
     }
-    
-    console.log(`Token retrieved: ${token || 'No token found'}`);
-    
-    if (token) {
-      console.log(`Adding Authorization header with token: Bearer ${token}`);
-      const clonedRequest = request.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return next.handle(clonedRequest);
-    } else {
-      console.log(
-        'No token available, sending request without Authorization header'
-      );
+
+    const authRequest = token ? this.addAuthorizationHeader(request, token) : request;
+
+    if (request.url.includes('/auth/refresh-token')) {
+      return next.handle(authRequest);
     }
-    return next.handle(request);
+
+    return next.handle(authRequest).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status !== 401 || !this.authService.getRefreshToken()) {
+          return throwError(() => error);
+        }
+
+        return this.authService.refreshAuthToken().pipe(
+          switchMap((response) => {
+            const refreshedRequest = this.addAuthorizationHeader(request, response.token);
+            return next.handle(refreshedRequest);
+          }),
+          catchError((refreshError) => {
+            this.authService.logout();
+            return throwError(() => refreshError);
+          })
+        );
+      })
+    );
+  }
+
+  private addAuthorizationHeader(
+    request: HttpRequest<unknown>,
+    token: string
+  ): HttpRequest<unknown> {
+    return request.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   }
 }

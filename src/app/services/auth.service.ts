@@ -18,6 +18,7 @@ export interface AppUser {
 
 interface LoginResponse {
   token: string;
+  refreshToken?: string;
   user: AppUser;
   message: string;
   success?: boolean;
@@ -40,6 +41,7 @@ interface MeResponse {
 })
 export class AuthService {
   private tokenKey = 'token';
+  private refreshTokenKey = 'refreshToken';
   private userKey = 'currentUser';
   private isAuthenticatedSubject: BehaviorSubject<boolean>;
   private currentUserSubject: BehaviorSubject<AppUser | null>;
@@ -71,6 +73,9 @@ export class AuthService {
         tap(response => {
           if (response.token) {
             this.setToken(response.token);
+            if (response.refreshToken) {
+              this.setRefreshToken(response.refreshToken);
+            }
             if (response.user) {
               this.setUser(response.user);
             }
@@ -87,6 +92,9 @@ export class AuthService {
         tap(response => {
           if (response.token) {
             this.setToken(response.token);
+            if (response.refreshToken) {
+              this.setRefreshToken(response.refreshToken);
+            }
             if (response.user) {
               this.setUser(response.user);
             }
@@ -139,9 +147,39 @@ export class AuthService {
     );
   }
 
+  refreshAuthToken(): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/refresh-token`, {
+      refreshToken: this.getRefreshToken(),
+    }).pipe(
+      tap(response => {
+        if (response.token) {
+          this.setToken(response.token);
+        }
+
+        if (response.refreshToken) {
+          this.setRefreshToken(response.refreshToken);
+        }
+
+        if (response.user) {
+          this.setUser(response.user);
+        }
+
+        this.isAuthenticatedSubject.next(true);
+      })
+    );
+  }
+
   // Logout method
   logout(): void {
+    const refreshToken = this.getRefreshToken();
+    if (refreshToken) {
+      this.http.post(`${environment.apiUrl}/auth/logout`, { refreshToken }).subscribe({
+        error: () => undefined,
+      });
+    }
+
     this.removeToken();
+    this.removeRefreshToken();
     this.removeUser();
     this.isAuthenticatedSubject.next(false);
   }
@@ -149,6 +187,10 @@ export class AuthService {
   // Get stored token
   getToken(): string | null {
     return this.cookieService.get(this.tokenKey) || null;
+  }
+
+  getRefreshToken(): string | null {
+    return this.cookieService.get(this.refreshTokenKey) || null;
   }
 
   // Get stored user
@@ -197,6 +239,15 @@ export class AuthService {
     });
   }
 
+  private setRefreshToken(refreshToken: string): void {
+    this.cookieService.set(this.refreshTokenKey, refreshToken, {
+      expires: 30,
+      path: '/',
+      secure: window.location.protocol === 'https:',
+      sameSite: 'Strict',
+    });
+  }
+
   private setUser(user: any): void {
     this.cookieService.set(this.userKey, JSON.stringify(user), {
       expires: 7,
@@ -209,6 +260,10 @@ export class AuthService {
 
   private removeToken(): void {
     this.cookieService.delete(this.tokenKey, '/');
+  }
+
+  private removeRefreshToken(): void {
+    this.cookieService.delete(this.refreshTokenKey, '/');
   }
 
   private removeUser(): void {
