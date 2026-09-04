@@ -57,7 +57,7 @@ export class WalletComponent implements OnInit {
   constructor(
     private walletService: WalletService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   get pendingPurchasesCount(): number {
     return this.purchases.filter((item) => item.status === 'pending').length;
@@ -200,11 +200,11 @@ export class WalletComponent implements OnInit {
     this.scrollPackageIntoView(index);
   }
 
-  getPackageUnitPrice(pointPackage: PointPackage): number { 
-    const price = Number(pointPackage.price) || 1;
-    const points = Number(pointPackage.points) || 0;
+  getPackageUnitPrice(pointPackage: PointPackage): number {
+    const points = Number(pointPackage.points) || 1;
+    const price = Number(pointPackage.price) || 0;
 
-    return Number((points / price).toFixed(2));
+    return Number((price / points).toFixed(4));
   }
 
   scrollPackages(direction: 'previous' | 'next'): void {
