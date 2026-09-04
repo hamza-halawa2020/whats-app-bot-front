@@ -200,9 +200,11 @@ export class WalletComponent implements OnInit {
     this.scrollPackageIntoView(index);
   }
 
-  getPackageUnitPrice(pointPackage: PointPackage): number {
-    const points = Number(pointPackage.points) || 1;
-    return Number((Number(pointPackage.price) / points).toFixed(2));
+  getPackageUnitPrice(pointPackage: PointPackage): number { 
+    const price = Number(pointPackage.price) || 1;
+    const points = Number(pointPackage.points) || 0;
+
+    return Number((points / price).toFixed(2));
   }
 
   scrollPackages(direction: 'previous' | 'next'): void {
