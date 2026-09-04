@@ -27,9 +27,63 @@ export interface WalletResponse {
   transactions: WalletTransaction[];
 }
 
+export interface PointPackage {
+  id: number;
+  name: string;
+  points: number;
+  price: number;
+  currency: string;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PointPurchase {
+  id: number;
+  userId: number;
+  packageId?: number | null;
+  paymentMethod: 'manual' | 'automatic';
+  status: 'pending' | 'approved' | 'refused' | 'canceled';
+  points: number;
+  amount: number;
+  currency: string;
+  proofReference?: string | null;
+  proofFileName?: string | null;
+  proofFileType?: string | null;
+  userNote?: string | null;
+  adminNote?: string | null;
+  reviewedBy?: number | null;
+  reviewedAt?: string | null;
+  walletTransactionId?: number | null;
+  createdAt: string;
+  updatedAt?: string;
+  user?: AppUser;
+  package?: PointPackage | null;
+}
+
 export interface AdminUsersResponse {
   success: boolean;
   users: AppUser[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export interface AdminAnalytics {
+  totalUsers: number;
+  verifiedUsers: number;
+  adminUsers: number;
+  pendingPayments: number;
+  activePackages: number;
+  walletPoints: number;
+}
+
+export interface PaginatedPackagesResponse {
+  success: boolean;
+  packages: PointPackage[];
+  total: number;
+  page: number;
+  totalPages: number;
 }
 
 export interface AdminCreateUserPayload {
@@ -53,6 +107,8 @@ export interface AppSettings {
   signupGiftPoints: number;
   messagePointCost: number;
   dailyMessageLimit: number;
+  pointUnitPrice: number;
+  pointCurrency: string;
 }
 
 @Injectable({
@@ -67,14 +123,78 @@ export class WalletService {
     return this.http.get<WalletResponse>(`${this.apiUrl}/wallet`);
   }
 
-  getTransactions(page = 1, limit = 20): Observable<WalletResponse> {
+  getTransactions(page = 1, limit = 10): Observable<WalletResponse> {
     return this.http.get<WalletResponse>(
       `${this.apiUrl}/wallet/transactions?page=${page}&limit=${limit}`
     );
   }
 
-  getAdminUsers(): Observable<AdminUsersResponse> {
-    return this.http.get<AdminUsersResponse>(`${this.apiUrl}/admin/users`);
+  getPointPackages(page = 1, limit = 10): Observable<PaginatedPackagesResponse> {
+    return this.http.get<PaginatedPackagesResponse>(
+      `${this.apiUrl}/wallet/packages?page=${page}&limit=${limit}`
+    );
+  }
+
+  createPointPurchase(payload: {
+    packageId?: number | null;
+    paymentMethod: 'manual' | 'automatic';
+    points?: number | null;
+    proofReference?: string;
+    proofFile?: { name: string; type: string; data: string } | null;
+    userNote?: string;
+  }): Observable<{ success: boolean; message: string; purchase: PointPurchase }> {
+    return this.http.post<{ success: boolean; message: string; purchase: PointPurchase }>(
+      `${this.apiUrl}/wallet/purchases`,
+      payload
+    );
+  }
+
+  getPointPurchases(page = 1, limit = 10): Observable<{
+    success: boolean;
+    purchases: PointPurchase[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    return this.http.get<{
+      success: boolean;
+      purchases: PointPurchase[];
+      total: number;
+      page: number;
+      totalPages: number;
+    }>(`${this.apiUrl}/wallet/purchases?page=${page}&limit=${limit}`);
+  }
+
+  updatePointPurchase(
+    purchaseId: string | number,
+    payload: {
+      proofReference?: string;
+      proofFile?: { name: string; type: string; data: string } | null;
+      userNote?: string;
+    }
+  ): Observable<{ success: boolean; message: string; purchase: PointPurchase }> {
+    return this.http.patch<{ success: boolean; message: string; purchase: PointPurchase }>(
+      `${this.apiUrl}/wallet/purchases/${purchaseId}`,
+      payload
+    );
+  }
+
+  getPointPurchaseProof(purchaseId: string | number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/wallet/purchases/${purchaseId}/proof`, {
+      responseType: 'blob',
+    });
+  }
+
+  getAdminUsers(page = 1, limit = 10): Observable<AdminUsersResponse> {
+    return this.http.get<AdminUsersResponse>(
+      `${this.apiUrl}/admin/users?page=${page}&limit=${limit}`
+    );
+  }
+
+  getAdminAnalytics(): Observable<{ success: boolean; analytics: AdminAnalytics }> {
+    return this.http.get<{ success: boolean; analytics: AdminAnalytics }>(
+      `${this.apiUrl}/admin/users/analytics`
+    );
   }
 
   createUser(payload: AdminCreateUserPayload): Observable<{ success: boolean; message: string; user: AppUser }> {
@@ -125,6 +245,66 @@ export class WalletService {
   ): Observable<{ success: boolean; message: string; settings: AppSettings }> {
     return this.http.patch<{ success: boolean; message: string; settings: AppSettings }>(
       `${this.apiUrl}/admin/settings`,
+      payload
+    );
+  }
+
+  getAdminPointPackages(page = 1, limit = 10): Observable<PaginatedPackagesResponse> {
+    return this.http.get<PaginatedPackagesResponse>(
+      `${this.apiUrl}/admin/payments/packages?page=${page}&limit=${limit}`
+    );
+  }
+
+  createAdminPointPackage(
+    payload: Omit<PointPackage, 'id' | 'createdAt' | 'updatedAt'>
+  ): Observable<{ success: boolean; message: string; package: PointPackage }> {
+    return this.http.post<{ success: boolean; message: string; package: PointPackage }>(
+      `${this.apiUrl}/admin/payments/packages`,
+      payload
+    );
+  }
+
+  updateAdminPointPackage(
+    packageId: string | number,
+    payload: Partial<Omit<PointPackage, 'id' | 'createdAt' | 'updatedAt'>>
+  ): Observable<{ success: boolean; message: string; package: PointPackage }> {
+    return this.http.patch<{ success: boolean; message: string; package: PointPackage }>(
+      `${this.apiUrl}/admin/payments/packages/${packageId}`,
+      payload
+    );
+  }
+
+  getAdminPointPurchases(status = '', page = 1, limit = 10): Observable<{
+    success: boolean;
+    purchases: PointPurchase[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    const query = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+
+    if (status) {
+      query.set('status', status);
+    }
+
+    return this.http.get<{
+      success: boolean;
+      purchases: PointPurchase[];
+      total: number;
+      page: number;
+      totalPages: number;
+    }>(`${this.apiUrl}/admin/payments/purchases?${query.toString()}`);
+  }
+
+  reviewPointPurchase(
+    purchaseId: string | number,
+    payload: { status: 'approved' | 'refused' | 'canceled'; adminNote?: string }
+  ): Observable<{ success: boolean; message: string; purchase: PointPurchase }> {
+    return this.http.patch<{ success: boolean; message: string; purchase: PointPurchase }>(
+      `${this.apiUrl}/admin/payments/purchases/${purchaseId}/review`,
       payload
     );
   }

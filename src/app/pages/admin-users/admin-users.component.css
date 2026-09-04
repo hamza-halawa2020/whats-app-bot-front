@@ -1,7 +1,12 @@
 .admin-page {
   min-height: 100vh;
   padding: 118px 0 64px;
-  background: #f8fafc;
+  background: #f6f8fb;
+}
+
+.admin-shell {
+  display: grid;
+  gap: 18px;
 }
 
 .page-head {
@@ -9,7 +14,6 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 24px;
 }
 
 .page-head h1 {
@@ -19,36 +23,71 @@
   color: #111827;
 }
 
-.page-head p {
+.page-head p,
+.panel-head p,
+.compact-form p {
   margin: 0;
   color: #667085;
 }
 
-.create-box,
-.action-box,
-.settings-box,
-.users-box {
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.summary-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 16px;
+}
+
+.summary-card span {
+  display: block;
+  color: #667085;
+  font-size: 0.88rem;
+}
+
+.summary-card strong {
+  display: block;
+  margin-top: 8px;
+  color: #111827;
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  border-bottom: 1px solid #d0d5dd;
+}
+
+.admin-tabs button {
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: #667085;
+  padding: 12px 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.admin-tabs button.active {
+  border-bottom-color: #12805b;
+  color: #12805b;
+}
+
+.admin-panel,
+.compact-form {
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   background: #ffffff;
   padding: 22px;
 }
 
-.create-box,
-.action-box,
-.settings-box {
-  margin-bottom: 18px;
-}
-
-.create-box h2,
-.action-box h2,
-.settings-box h2 {
-  margin: 0 0 4px;
-  font-size: 1.2rem;
-  font-weight: 750;
-}
-
-.settings-head {
+.panel-head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -56,23 +95,110 @@
   margin-bottom: 18px;
 }
 
-.settings-head p {
-  margin: 0;
-  color: #667085;
+.panel-head h2,
+.compact-form h3 {
+  margin: 0 0 4px;
+  color: #111827;
+  font-size: 1.2rem;
+  font-weight: 750;
 }
 
-.action-box p {
-  margin: 0 0 16px;
+.compact-form {
+  margin-bottom: 16px;
+  background: #fbfcfe;
+}
+
+.form-tail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.status-filter {
+  max-width: 170px;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  border-radius: 999px;
+  background: #eef2f7;
+  color: #344054;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-weight: 750;
+  text-transform: capitalize;
+}
+
+.review-cell {
+  min-width: 240px;
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.empty-state {
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
   color: #667085;
+  padding: 22px;
+  text-align: center;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  color: #667085;
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid #eef2f7;
+  color: #667085;
+  margin-top: 12px;
+  padding-top: 14px;
+}
+
+.pagination-bar div {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 991px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 767px) {
-  .page-head {
+  .page-head,
+  .panel-head,
+  .form-tail,
+  .pagination-bar {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .settings-head {
-    flex-direction: column;
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .status-filter {
+    max-width: none;
+    width: 100%;
   }
 }

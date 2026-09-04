@@ -1,0 +1,19 @@
+.app-navbar {
+    left: 0;
+    min-height: 66px;
+    position: sticky;
+    right: 0;
+    top: 0;
+    z-index: 1040;
+}
+
+:host {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 1040;
+}
+
+.navbar-brand img {
+    flex: 0 0 auto;
+}

@@ -23,7 +23,7 @@ export class ClientsService {
   constructor(private http: HttpClient) {}
 
 
-  getClients(page: number, limit: number): Observable<{ clients: ApiResponse[]; total: number }> {
+  getClients(page = 1, limit = 10): Observable<{ clients: ApiResponse[]; total: number }> {
     return this.http.get<{ clients: ApiResponse[]; total: number }>(`${this.apiUrl}${this.data}?page=${page}&limit=${limit}`);
   }
 

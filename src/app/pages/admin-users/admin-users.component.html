@@ -2,202 +2,518 @@
 
 <main class="admin-page">
   <section class="container">
-    <div class="page-head">
-      <div>
-        <span class="badge text-bg-dark">Admin</span>
-        <h1>Users</h1>
-        <p>Manage user points and wallet balances.</p>
-      </div>
-      <button class="btn btn-outline-primary" type="button" (click)="loadUsers()" [disabled]="isLoading">
-        Refresh
-      </button>
-    </div>
-
-    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
-    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-
-    <div class="settings-box">
-      <div class="settings-head">
+    <div class="admin-shell">
+      <div class="page-head">
         <div>
-          <h2>Platform settings</h2>
-          <p>Control verification gifts, message pricing, and daily sending limits.</p>
+          <span class="badge text-bg-dark">Admin</span>
+          <h1>Control center</h1>
+          <p>Review payments, manage users, set packages, and tune platform pricing.</p>
         </div>
-        <button class="btn btn-primary" type="button" (click)="saveSettings()" [disabled]="isSavingSettings">
-          {{ isSavingSettings ? 'Saving...' : 'Save settings' }}
+        <button class="btn btn-outline-primary" type="button" (click)="refreshActiveSection()" [disabled]="isLoading">
+          Refresh
         </button>
       </div>
-      <div class="row g-3">
-        <div class="col-md-4">
-          <label class="form-label" for="signupGiftPoints">Signup gift points</label>
-          <input
-            class="form-control"
-            id="signupGiftPoints"
-            type="number"
-            min="0"
-            [(ngModel)]="settingsForm.signupGiftPoints"
-          />
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <span>Pending payments</span>
+          <strong>{{ pendingPurchasesCount }}</strong>
         </div>
-        <div class="col-md-4">
-          <label class="form-label" for="messagePointCost">Message cost</label>
-          <input
-            class="form-control"
-            id="messagePointCost"
-            type="number"
-            min="1"
-            [(ngModel)]="settingsForm.messagePointCost"
-          />
+        <div class="summary-card">
+          <span>Users</span>
+          <strong>{{ analytics.totalUsers }}</strong>
         </div>
-        <div class="col-md-4">
-          <label class="form-label" for="dailyMessageLimit">Daily message limit</label>
-          <input
-            class="form-control"
-            id="dailyMessageLimit"
-            type="number"
-            min="0"
-            [(ngModel)]="settingsForm.dailyMessageLimit"
-          />
-          <div class="form-text">Use 0 for unlimited.</div>
+        <div class="summary-card">
+          <span>Wallet points</span>
+          <strong>{{ totalWalletPoints }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>Active packages</span>
+          <strong>{{ activePackagesCount }}</strong>
         </div>
       </div>
-    </div>
 
-    <div class="create-box">
-      <h2>Create user</h2>
-      <div class="row g-2">
-        <div class="col-md-3">
-          <input class="form-control" type="text" [(ngModel)]="createUserForm.username" placeholder="Username" />
-        </div>
-        <div class="col-md-3">
-          <input class="form-control" type="email" [(ngModel)]="createUserForm.email" placeholder="Email" />
-        </div>
-        <div class="col-md-2">
-          <input class="form-control" type="text" [(ngModel)]="createUserForm.phone" placeholder="Phone" />
-        </div>
-        <div class="col-md-2">
-          <input class="form-control" type="password" [(ngModel)]="createUserForm.password" placeholder="Password" />
-        </div>
-        <div class="col-md-1">
-          <select class="form-select" [(ngModel)]="createUserForm.role">
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
+      <div class="admin-tabs" role="tablist" aria-label="Admin sections">
+        <button type="button" [class.active]="activeSection === 'payments'" (click)="setSection('payments')">
+          Payments
+        </button>
+        <button type="button" [class.active]="activeSection === 'users'" (click)="setSection('users')">
+          Users
+        </button>
+        <button type="button" [class.active]="activeSection === 'packages'" (click)="setSection('packages')">
+          Packages
+        </button>
+        <button type="button" [class.active]="activeSection === 'settings'" (click)="setSection('settings')">
+          Settings
+        </button>
+      </div>
+
+      <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+      <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+      <section class="admin-panel" *ngIf="activeSection === 'payments'">
+        <div class="panel-head">
+          <div>
+            <h2>Payment requests</h2>
+            <p>Approve manual payments after checking their proof file.</p>
+          </div>
+          <select class="form-select status-filter" [(ngModel)]="purchaseStatusFilter" (change)="onPurchaseStatusChange()">
+            <option value="">All</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="refused">Refused</option>
+            <option value="canceled">Canceled</option>
           </select>
         </div>
-        <div class="col-md-1">
-          <input class="form-control" type="number" min="0" [(ngModel)]="createUserForm.walletPoints" placeholder="Pts" />
+
+        <div *ngIf="purchases.length === 0" class="empty-state">No payment requests found.</div>
+
+        <div class="table-responsive" *ngIf="purchases.length > 0">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Status</th>
+                <th>Method</th>
+                <th>Points</th>
+                <th>Amount</th>
+                <th>Proof</th>
+                <th>Notes</th>
+                <th>Review</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of purchases">
+                <td>
+                  <strong>{{ item.user?.username || item.user?.email || item.userId }}</strong>
+                  <div class="text-secondary small">{{ item.user?.phone || item.user?.email }}</div>
+                </td>
+                <td><span class="status-pill">{{ item.status }}</span></td>
+                <td>{{ item.paymentMethod }}</td>
+                <td class="fw-bold">{{ item.points }}</td>
+                <td>{{ item.amount }} {{ item.currency }}</td>
+                <td>
+                  <button
+                    *ngIf="item.proofFileName"
+                    class="btn btn-sm btn-outline-primary"
+                    type="button"
+                    (click)="openProof(item)"
+                  >
+                    Open
+                  </button>
+                  <span *ngIf="!item.proofFileName">-</span>
+                </td>
+                <td>
+                  <div>{{ item.proofReference || item.userNote || '-' }}</div>
+                  <div class="text-secondary small" *ngIf="item.adminNote">Admin: {{ item.adminNote }}</div>
+                </td>
+                <td class="review-cell">
+                  <ng-container *ngIf="item.status === 'pending'; else reviewedPayment">
+                    <input
+                      class="form-control form-control-sm"
+                      type="text"
+                      [(ngModel)]="reviewNotes[item.id]"
+                      placeholder="Admin note"
+                    />
+                    <div class="action-row">
+                      <button class="btn btn-sm btn-success" type="button" (click)="reviewPurchase(item, 'approved')">
+                        Accept
+                      </button>
+                      <button
+                        class="btn btn-sm btn-outline-danger"
+                        type="button"
+                        (click)="reviewPurchase(item, 'refused')"
+                      >
+                        Refuse
+                      </button>
+                      <button
+                        class="btn btn-sm btn-outline-secondary"
+                        type="button"
+                        (click)="reviewPurchase(item, 'canceled')"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </ng-container>
+                  <ng-template #reviewedPayment>
+                    <span class="text-secondary small">{{ item.reviewedAt | date : 'short' }}</span>
+                  </ng-template>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="col-12">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="createVerified" [(ngModel)]="createUserForm.isVerified" />
-            <label class="form-check-label" for="createVerified">Verified user</label>
+
+        <div class="pagination-bar" *ngIf="purchasesTotal > purchasesLimit">
+          <span>Page {{ purchasesPage }} of {{ purchasesTotalPages }} · {{ purchasesTotal }} requests</span>
+          <div>
+            <button
+              class="btn btn-sm btn-light border"
+              type="button"
+              (click)="changePurchasesPage(-1)"
+              [disabled]="purchasesPage <= 1"
+            >
+              Previous
+            </button>
+            <button
+              class="btn btn-sm btn-light border"
+              type="button"
+              (click)="changePurchasesPage(1)"
+              [disabled]="purchasesPage >= purchasesTotalPages"
+            >
+              Next
+            </button>
           </div>
         </div>
-        <div class="col-12 d-grid d-md-flex justify-content-md-end">
-          <button class="btn btn-primary" type="button" (click)="createUser()">Create user</button>
-        </div>
-      </div>
-    </div>
+      </section>
 
-    <div *ngIf="editingUser" class="action-box">
-      <div>
-        <h2>Edit user</h2>
-        <p>{{ editingUser.email || editingUser.phone }}</p>
-      </div>
-      <div class="row g-2">
-        <div class="col-md-3">
-          <input class="form-control" type="text" [(ngModel)]="editUserForm.username" placeholder="Username" />
-        </div>
-        <div class="col-md-3">
-          <input class="form-control" type="email" [(ngModel)]="editUserForm.email" placeholder="Email" />
-        </div>
-        <div class="col-md-2">
-          <input class="form-control" type="text" [(ngModel)]="editUserForm.phone" placeholder="Phone" />
-        </div>
-        <div class="col-md-2">
-          <input class="form-control" type="password" [(ngModel)]="editUserForm.password" placeholder="New password" />
-        </div>
-        <div class="col-md-2">
-          <select class="form-select" [(ngModel)]="editUserForm.role">
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
-        <div class="col-12">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="editVerified" [(ngModel)]="editUserForm.isVerified" />
-            <label class="form-check-label" for="editVerified">Verified user</label>
+      <section class="admin-panel" *ngIf="activeSection === 'users'">
+        <div class="panel-head">
+          <div>
+            <h2>Users</h2>
+            <p>Create accounts and adjust wallet balances.</p>
           </div>
         </div>
-        <div class="col-12 d-flex justify-content-end gap-2">
-          <button class="btn btn-light border" type="button" (click)="editingUser = null">Cancel</button>
-          <button class="btn btn-primary" type="button" (click)="updateUser()">Save changes</button>
-        </div>
-      </div>
-    </div>
 
-    <div *ngIf="selectedUser" class="action-box">
-      <div>
-        <h2>{{ action === 'credit' ? 'Add points' : 'Deduct points' }}</h2>
-        <p>{{ selectedUser.email || selectedUser.phone }}</p>
-      </div>
-      <div class="row g-2">
-        <div class="col-md-3">
-          <input class="form-control" type="number" min="1" [(ngModel)]="points" placeholder="Points" />
+        <div class="compact-form">
+          <h3>Create user</h3>
+          <div class="row g-2">
+            <div class="col-md-3">
+              <input class="form-control" type="text" [(ngModel)]="createUserForm.username" placeholder="Username" />
+            </div>
+            <div class="col-md-3">
+              <input class="form-control" type="email" [(ngModel)]="createUserForm.email" placeholder="Email" />
+            </div>
+            <div class="col-md-2">
+              <input class="form-control" type="text" [(ngModel)]="createUserForm.phone" placeholder="Phone" />
+            </div>
+            <div class="col-md-2">
+              <input class="form-control" type="password" [(ngModel)]="createUserForm.password" placeholder="Password" />
+            </div>
+            <div class="col-md-1">
+              <select class="form-select" [(ngModel)]="createUserForm.role">
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div class="col-md-1">
+              <input
+                class="form-control"
+                type="number"
+                min="0"
+                [(ngModel)]="createUserForm.walletPoints"
+                placeholder="Pts"
+              />
+            </div>
+            <div class="col-12 form-tail">
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="createVerified"
+                  [(ngModel)]="createUserForm.isVerified"
+                />
+                <label class="form-check-label" for="createVerified">Verified user</label>
+              </div>
+              <button class="btn btn-primary" type="button" (click)="createUser()">Create user</button>
+            </div>
+          </div>
         </div>
-        <div class="col-md-6">
-          <input class="form-control" type="text" [(ngModel)]="note" placeholder="Note" />
-        </div>
-        <div class="col-md-3 d-grid">
-          <button class="btn btn-primary" type="button" (click)="submitWalletAction()">Confirm</button>
-        </div>
-      </div>
-    </div>
 
-    <div class="users-box">
-      <div *ngIf="isLoading" class="text-secondary">Loading...</div>
+        <div *ngIf="editingUser" class="compact-form">
+          <h3>Edit user</h3>
+          <p>{{ editingUser.email || editingUser.phone }}</p>
+          <div class="row g-2">
+            <div class="col-md-3">
+              <input class="form-control" type="text" [(ngModel)]="editUserForm.username" placeholder="Username" />
+            </div>
+            <div class="col-md-3">
+              <input class="form-control" type="email" [(ngModel)]="editUserForm.email" placeholder="Email" />
+            </div>
+            <div class="col-md-2">
+              <input class="form-control" type="text" [(ngModel)]="editUserForm.phone" placeholder="Phone" />
+            </div>
+            <div class="col-md-2">
+              <input class="form-control" type="password" [(ngModel)]="editUserForm.password" placeholder="New password" />
+            </div>
+            <div class="col-md-2">
+              <select class="form-select" [(ngModel)]="editUserForm.role">
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div class="col-12 form-tail">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="editVerified" [(ngModel)]="editUserForm.isVerified" />
+                <label class="form-check-label" for="editVerified">Verified user</label>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-light border" type="button" (click)="editingUser = null">Cancel</button>
+                <button class="btn btn-primary" type="button" (click)="updateUser()">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <div *ngIf="!isLoading" class="table-responsive">
-        <table class="table align-middle">
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Phone</th>
-              <th>Role</th>
-              <th>Verified</th>
-              <th>Points</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let user of users">
-              <td>
-                <strong>{{ user.username || user.email }}</strong>
-                <div class="text-secondary small">{{ user.email }}</div>
-              </td>
-              <td>{{ user.phone || '-' }}</td>
-              <td><span class="badge text-bg-light">{{ user.role || 'user' }}</span></td>
-              <td>
-                <span class="badge" [class.text-bg-success]="user.isVerified" [class.text-bg-warning]="!user.isVerified">
-                  {{ user.isVerified ? 'Yes' : 'No' }}
-                </span>
-              </td>
-              <td class="fw-bold">{{ user.walletPoints || 0 }}</td>
-              <td>
-                <div class="d-flex flex-wrap gap-2">
-                  <button class="btn btn-sm btn-outline-primary" type="button" (click)="openEditUser(user)">
-                    Edit
-                  </button>
-                  <button class="btn btn-sm btn-success" type="button" (click)="openWalletAction(user, 'credit')">
-                    Add
-                  </button>
-                  <button class="btn btn-sm btn-outline-danger" type="button" (click)="openWalletAction(user, 'debit')">
-                    Deduct
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <div *ngIf="selectedUser" class="compact-form">
+          <h3>{{ action === 'credit' ? 'Add points' : 'Deduct points' }}</h3>
+          <p>{{ selectedUser.email || selectedUser.phone }}</p>
+          <div class="row g-2">
+            <div class="col-md-3">
+              <input class="form-control" type="number" min="1" [(ngModel)]="points" placeholder="Points" />
+            </div>
+            <div class="col-md-6">
+              <input class="form-control" type="text" [(ngModel)]="note" placeholder="Note" />
+            </div>
+            <div class="col-md-3 d-grid">
+              <button class="btn btn-primary" type="button" (click)="submitWalletAction()">Confirm</button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="isLoading" class="empty-state">Loading...</div>
+
+        <div *ngIf="!isLoading" class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Phone</th>
+                <th>Role</th>
+                <th>Verified</th>
+                <th>Points</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users">
+                <td>
+                  <strong>{{ user.username || user.email }}</strong>
+                  <div class="text-secondary small">{{ user.email }}</div>
+                </td>
+                <td>{{ user.phone || '-' }}</td>
+                <td><span class="status-pill">{{ user.role || 'user' }}</span></td>
+                <td>
+                  <span
+                    class="badge"
+                    [class.text-bg-success]="user.isVerified"
+                    [class.text-bg-warning]="!user.isVerified"
+                  >
+                    {{ user.isVerified ? 'Yes' : 'No' }}
+                  </span>
+                </td>
+                <td class="fw-bold">{{ user.walletPoints || 0 }}</td>
+                <td>
+                  <div class="action-row">
+                    <button class="btn btn-sm btn-outline-primary" type="button" (click)="openEditUser(user)">Edit</button>
+                    <button class="btn btn-sm btn-success" type="button" (click)="openWalletAction(user, 'credit')">
+                      Add
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" type="button" (click)="openWalletAction(user, 'debit')">
+                      Deduct
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination-bar">
+          <span>
+            Page {{ usersPage }} of {{ usersTotalPages }} ·
+            Showing {{ users.length }} of {{ usersTotal }} users
+          </span>
+          <div>
+            <button
+              class="btn btn-sm btn-light border"
+              type="button"
+              (click)="changeUsersPage(-1)"
+              [disabled]="usersPage <= 1"
+            >
+              Previous
+            </button>
+            <button
+              class="btn btn-sm btn-light border"
+              type="button"
+              (click)="changeUsersPage(1)"
+              [disabled]="usersPage >= usersTotalPages"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-panel" *ngIf="activeSection === 'packages'">
+        <div class="panel-head">
+          <div>
+            <h2>Point packages</h2>
+            <p>Create fixed choices users can buy from the wallet page.</p>
+          </div>
+        </div>
+
+        <div class="compact-form">
+          <h3>{{ editingPackage ? 'Edit package' : 'Create package' }}</h3>
+          <div class="row g-2 align-items-end">
+            <div class="col-md-3">
+              <label class="form-label">Name</label>
+              <input class="form-control" type="text" [(ngModel)]="packageForm.name" placeholder="Package name" />
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Points</label>
+              <input class="form-control" type="number" min="1" [(ngModel)]="packageForm.points" />
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Price</label>
+              <input class="form-control" type="number" min="0.01" step="0.01" [(ngModel)]="packageForm.price" />
+            </div>
+            <div class="col-md-2">
+              <label class="form-label">Currency</label>
+              <input class="form-control" type="text" maxlength="10" [(ngModel)]="packageForm.currency" />
+            </div>
+            <div class="col-md-1">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="packageActive" [(ngModel)]="packageForm.isActive" />
+                <label class="form-check-label" for="packageActive">Active</label>
+              </div>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+              <button class="btn btn-primary w-100" type="button" (click)="savePackage()" [disabled]="isSavingPackage">
+                {{ isSavingPackage ? 'Saving...' : editingPackage ? 'Update' : 'Create' }}
+              </button>
+              <button
+                *ngIf="editingPackage"
+                class="btn btn-light border"
+                type="button"
+                (click)="cancelPackageEdit()"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="packages.length === 0" class="empty-state">No packages created yet.</div>
+
+        <div class="table-responsive" *ngIf="packages.length > 0">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Points</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of packages">
+                <td><strong>{{ item.name }}</strong></td>
+                <td>{{ item.points }}</td>
+                <td>{{ item.price }} {{ item.currency }}</td>
+                <td>
+                  <span class="badge" [class.text-bg-success]="item.isActive" [class.text-bg-secondary]="!item.isActive">
+                    {{ item.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-primary" type="button" (click)="editPackage(item)">Edit</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination-bar" *ngIf="packagesTotal > packagesLimit">
+          <span>Page {{ packagesPage }} of {{ packagesTotalPages }} · {{ packagesTotal }} packages</span>
+          <div>
+            <button
+              class="btn btn-sm btn-light border"
+              type="button"
+              (click)="changePackagesPage(-1)"
+              [disabled]="packagesPage <= 1"
+            >
+              Previous
+            </button>
+            <button
+              class="btn btn-sm btn-light border"
+              type="button"
+              (click)="changePackagesPage(1)"
+              [disabled]="packagesPage >= packagesTotalPages"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-panel" *ngIf="activeSection === 'settings'">
+        <div class="panel-head">
+          <div>
+            <h2>Platform settings</h2>
+            <p>Control verification gifts, message pricing, and point currency.</p>
+          </div>
+          <button class="btn btn-primary" type="button" (click)="saveSettings()" [disabled]="isSavingSettings">
+            {{ isSavingSettings ? 'Saving...' : 'Save settings' }}
+          </button>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label" for="signupGiftPoints">Signup gift points</label>
+            <input
+              class="form-control"
+              id="signupGiftPoints"
+              type="number"
+              min="0"
+              [(ngModel)]="settingsForm.signupGiftPoints"
+            />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="messagePointCost">Message cost</label>
+            <input
+              class="form-control"
+              id="messagePointCost"
+              type="number"
+              min="1"
+              [(ngModel)]="settingsForm.messagePointCost"
+            />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="dailyMessageLimit">Daily message limit</label>
+            <input
+              class="form-control"
+              id="dailyMessageLimit"
+              type="number"
+              min="0"
+              [(ngModel)]="settingsForm.dailyMessageLimit"
+            />
+            <div class="form-text">Use 0 for unlimited.</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="pointUnitPrice">Price for 1 point</label>
+            <input
+              class="form-control"
+              id="pointUnitPrice"
+              type="number"
+              min="0.01"
+              step="0.01"
+              [(ngModel)]="settingsForm.pointUnitPrice"
+            />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="pointCurrency">Point currency</label>
+            <input
+              class="form-control"
+              id="pointCurrency"
+              type="text"
+              maxlength="10"
+              [(ngModel)]="settingsForm.pointCurrency"
+            />
+          </div>
+        </div>
+      </section>
     </div>
   </section>
 </main>

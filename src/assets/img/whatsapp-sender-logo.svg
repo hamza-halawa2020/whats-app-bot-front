@@ -1,19 +1,9 @@
-<svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Main Circle Background -->
-  <circle cx="25" cy="25" r="23" fill="#074da3"/>
-  <circle cx="25" cy="25" r="20" fill="#00a94f"/>
-  
-  <!-- WhatsApp Chat Bubble -->
-  <path d="M25 14C19.48 14 15 18.48 15 24C15 25.82 15.44 27.54 16.24 29.06L15 35L21.2 33.8C22.64 34.52 24.28 34.9 26 34.9C31.52 34.9 36 30.42 36 24.9C36 19.38 31.52 14.9 26 14.9L25 14Z" fill="white"/>
-  
-  <!-- Message Icon Inside -->
-  <path d="M21 22H29M21 25H27M21 28H25" stroke="#00a94f" stroke-width="1.5" stroke-linecap="round"/>
-  
-  <!-- Send Arrow -->
-  <path d="M30 20L33 23L30 26" stroke="#074da3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  
-  <!-- Connection Dots -->
-  <circle cx="18" cy="18" r="1.5" fill="#074da3" opacity="0.7"/>
-  <circle cx="32" cy="32" r="1.5" fill="#074da3" opacity="0.7"/>
-  <circle cx="18" cy="32" r="1.5" fill="#074da3" opacity="0.5"/>
+<svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">WhatsApp Sender logo</title>
+  <desc id="logoDesc">Minimal green chat logo with a send arrow.</desc>
+  <rect x="6" y="6" width="38" height="38" rx="10" fill="#18B76A"/>
+  <path d="M16 36L17.5 30.5C15.9 28.6 15 26.2 15 23.7C15 17.9 19.7 13.2 25.5 13.2C31.3 13.2 36 17.9 36 23.7C36 29.5 31.3 34.2 25.5 34.2C23.2 34.2 21.1 33.5 19.4 32.2L16 36Z" fill="white"/>
+  <path d="M21 22H27" stroke="#18B76A" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M21 26H25" stroke="#18B76A" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M28.5 20.5L32 24L28.5 27.5" stroke="#18B76A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

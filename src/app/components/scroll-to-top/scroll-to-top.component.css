@@ -1,0 +1,17 @@
+.app-scroll-top {
+    align-items: center;
+    bottom: 24px;
+    height: 44px;
+    justify-content: center;
+    position: fixed;
+    right: 24px;
+    width: 44px;
+    z-index: 1050;
+}
+
+@media (max-width: 575.98px) {
+    .app-scroll-top {
+        bottom: 18px;
+        right: 18px;
+    }
+}

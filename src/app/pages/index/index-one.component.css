@@ -1,6 +1,6 @@
 .home-background {
   background:
-    linear-gradient(135deg, rgba(25, 135, 84, 0.08), transparent 34%),
-    radial-gradient(circle at 85% 20%, rgba(13, 110, 253, 0.08), transparent 28%),
+    linear-gradient(135deg, rgba(24, 183, 106, 0.1), transparent 34%),
+    radial-gradient(circle at 85% 20%, rgba(24, 183, 106, 0.08), transparent 28%),
     #f8f9fa;
 }

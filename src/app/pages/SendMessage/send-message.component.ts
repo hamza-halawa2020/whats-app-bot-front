@@ -60,7 +60,7 @@ export class SendMessageComponent implements OnInit {
   activeTab: 'single' | 'broadcast' | 'schedules' = 'single';
   totalClients: number = 0;
   currentPage: number = 1;
-  pageSize: number = 100;
+  pageSize: number = 10;
   totalPages: number = 0;
   walletPoints: number = 0;
   messagePointCost: number = 1;

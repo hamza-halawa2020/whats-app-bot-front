@@ -2,56 +2,338 @@
 
 <main class="wallet-page">
   <section class="container">
-    <div class="page-head">
-      <div>
-        <span class="badge text-bg-primary">Wallet</span>
-        <h1>Your points</h1>
-        <p>Every WhatsApp message uses points from this balance.</p>
-      </div>
-      <button class="btn btn-outline-primary" type="button" (click)="loadWallet()" [disabled]="isLoading">
-        Refresh
-      </button>
-    </div>
-
-    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-
-    <div class="balance-box">
-      <span>Available points</span>
-      <strong>{{ walletPoints }}</strong>
-    </div>
-
-    <div class="history-box">
-      <h2>Recent activity</h2>
-
-      <div *ngIf="isLoading" class="text-secondary">Loading...</div>
-      <div *ngIf="!isLoading && transactions.length === 0" class="text-secondary">
-        No wallet activity yet.
+    <div class="wallet-shell">
+      <div class="page-head">
+        <div>
+          <span class="badge text-bg-primary">Wallet</span>
+          <h1>Your points</h1>
+          <p>Buy points, track payment requests, and review wallet activity.</p>
+        </div>
+        <button class="btn btn-outline-primary" type="button" (click)="refreshActiveSection()" [disabled]="isLoading">
+          Refresh
+        </button>
       </div>
 
-      <div *ngIf="transactions.length > 0" class="table-responsive">
-        <table class="table align-middle">
-          <thead>
-            <tr>
-              <th>Type</th>
-              <th>Source</th>
-              <th>Points</th>
-              <th>Balance</th>
-              <th>Note</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of transactions">
-              <td><span class="badge text-bg-light">{{ item.type }}</span></td>
-              <td>{{ item.source }}</td>
-              <td>{{ item.points }}</td>
-              <td>{{ item.balanceAfter }}</td>
-              <td>{{ item.note || '-' }}</td>
-              <td>{{ item.createdAt | date : 'short' }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="summary-grid">
+        <div class="summary-card balance-card">
+          <span>Available points</span>
+          <strong>{{ walletPoints }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>Pending payments</span>
+          <strong>{{ pendingPurchasesCount }}</strong>
+        </div>
+        <div class="summary-card">
+          <span>Need update</span>
+          <strong>{{ refusedPurchasesCount }}</strong>
+        </div>
       </div>
+
+      <div class="wallet-tabs" role="tablist" aria-label="Wallet sections">
+        <button type="button" [class.active]="activeSection === 'buy'" (click)="setSection('buy')">
+          Buy points
+        </button>
+        <button type="button" [class.active]="activeSection === 'payments'" (click)="setSection('payments')">
+          Payments
+        </button>
+        <button type="button" [class.active]="activeSection === 'activity'" (click)="setSection('activity')">
+          Activity
+        </button>
+      </div>
+
+      <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+      <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+      <section class="wallet-panel" *ngIf="activeSection === 'buy'">
+        <div class="panel-head">
+          <div>
+            <h2>Buy points</h2>
+            <p>Choose a package or enter custom points, then submit your payment for review.</p>
+          </div>
+          <div class="preview-price">
+            {{ purchasePreview.points }} points
+            <span>{{ purchasePreview.amount }} {{ purchasePreview.currency }}</span>
+          </div>
+        </div>
+
+        <div class="package-slider-wrap" *ngIf="packages.length > 0">
+          <div class="package-slider-head">
+            <div>
+              <strong>Active packages</strong>
+              <span>{{ packages.length }} available</span>
+            </div>
+          </div>
+
+          <div class="package-carousel">
+            <button
+              class="slider-arrow slider-arrow-left"
+              type="button"
+              aria-label="Previous packages"
+              (click)="scrollPackages('previous')"
+              [disabled]="packages.length <= 1"
+            >
+              &lt;
+            </button>
+
+            <div class="package-slider" #packageSlider>
+              <button
+                class="package-option"
+                type="button"
+                *ngFor="let item of packages; let index = index"
+                [class.active]="purchaseForm.packageId === item.id"
+                (click)="selectPackage(item)"
+              >
+                <span class="package-topline">
+                  <span class="package-name">{{ item.name }}</span>
+                  <span class="selected-badge" *ngIf="purchaseForm.packageId === item.id">Selected</span>
+                </span>
+                <span class="package-main">
+                  <strong>{{ item.points }}</strong>
+                  <small>points</small>
+                </span>
+                <span class="package-meta">
+                  <span>
+                    <small>Total</small>
+                    <b>{{ item.price }} {{ item.currency }}</b>
+                  </span>
+                  <span>
+                    <small>Per point</small>
+                    <b>{{ getPackageUnitPrice(item) }} {{ item.currency }}</b>
+                  </span>
+                </span>
+                <span class="package-select">
+                  {{ purchaseForm.packageId === item.id ? 'Chosen package' : 'Choose package' }}
+                </span>
+              </button>
+            </div>
+
+            <button
+              class="slider-arrow slider-arrow-right"
+              type="button"
+              aria-label="Next packages"
+              (click)="scrollPackages('next')"
+              [disabled]="packages.length <= 1"
+            >
+              &gt;
+            </button>
+          </div>
+
+          <div class="package-dots" *ngIf="packages.length > 1" aria-label="Package navigation">
+            <button
+              type="button"
+              *ngFor="let item of packages; let index = index"
+              [class.active]="index === selectedPackageIndex"
+              [attr.aria-label]="'Choose package ' + (index + 1)"
+              (click)="selectPackageByIndex(index)"
+            ></button>
+          </div>
+        </div>
+        <div class="custom-line">
+          <button class="btn btn-sm btn-outline-secondary" type="button" (click)="useCustomPoints()">
+            Custom points
+          </button>
+          <input
+            class="form-control"
+            type="number"
+            min="1"
+            [(ngModel)]="purchaseForm.points"
+            [disabled]="purchaseForm.packageId !== null"
+            placeholder="Points"
+          />
+          <span class="text-secondary">1 point = {{ settings.pointUnitPrice }} {{ settings.pointCurrency }}</span>
+          <strong class="custom-amount" *ngIf="purchaseForm.packageId === null">
+            Amount to pay: {{ purchasePreview.amount }} {{ purchasePreview.currency }}
+          </strong>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label" for="paymentMethod">Payment method</label>
+            <select class="form-select" id="paymentMethod" [(ngModel)]="purchaseForm.paymentMethod">
+              <option value="manual">Manual payment</option>
+              <option value="automatic">Automatic gateway</option>
+            </select>
+            <div class="form-text" *ngIf="purchaseForm.paymentMethod === 'automatic'">
+              Gateway integration will be connected later.
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="proofReference">Payment reference</label>
+            <input
+              class="form-control"
+              id="proofReference"
+              type="text"
+              [(ngModel)]="purchaseForm.proofReference"
+              placeholder="Transfer number or receipt link"
+            />
+          </div>
+          <div class="col-md-4" *ngIf="purchaseForm.paymentMethod === 'manual'">
+            <label class="form-label" for="proofFile">Payment proof</label>
+            <input
+              class="form-control"
+              id="proofFile"
+              type="file"
+              accept="application/pdf,image/png,image/jpeg,image/webp"
+              (change)="onProofFileSelected($event, 'create')"
+            />
+            <div class="form-text" *ngIf="purchaseForm.proofFile">
+              Selected: {{ purchaseForm.proofFile.name }}
+            </div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="userNote">Note</label>
+            <input
+              class="form-control"
+              id="userNote"
+              type="text"
+              [(ngModel)]="purchaseForm.userNote"
+              placeholder="Optional note"
+            />
+          </div>
+          <div class="col-12 form-tail">
+            <div class="pay-summary">
+              <span>Total</span>
+              <strong>{{ purchasePreview.amount }} {{ purchasePreview.currency }}</strong>
+            </div>
+            <button class="btn btn-primary" type="button" (click)="submitPurchase()" [disabled]="isBuying || isReadingFile">
+              {{ isBuying ? 'Submitting...' : 'Submit payment' }}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="wallet-panel" *ngIf="activeSection === 'payments'">
+        <div class="panel-head">
+          <div>
+            <h2>Payment requests</h2>
+            <p>Follow approval status and update refused payments.</p>
+          </div>
+        </div>
+
+        <div *ngIf="editingPurchase" class="compact-form">
+          <h3>Edit refused payment</h3>
+          <p>{{ editingPurchase.adminNote || 'Update your payment details and send it again.' }}</p>
+          <div class="row g-3">
+            <div class="col-md-5">
+              <input
+                class="form-control"
+                type="text"
+                [(ngModel)]="editPurchaseForm.proofReference"
+                placeholder="Payment reference"
+              />
+            </div>
+            <div class="col-md-3">
+              <input
+                class="form-control"
+                type="file"
+                accept="application/pdf,image/png,image/jpeg,image/webp"
+                (change)="onProofFileSelected($event, 'edit')"
+              />
+              <div class="form-text" *ngIf="editPurchaseForm.proofFile">
+                Selected: {{ editPurchaseForm.proofFile.name }}
+              </div>
+            </div>
+            <div class="col-md-2">
+              <input class="form-control" type="text" [(ngModel)]="editPurchaseForm.userNote" placeholder="Note" />
+            </div>
+            <div class="col-md-2 action-pair">
+              <button class="btn btn-light border" type="button" (click)="editingPurchase = null">Cancel</button>
+              <button class="btn btn-primary" type="button" (click)="updatePurchase()">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="purchases.length === 0" class="empty-state">No payment requests yet.</div>
+
+        <div *ngIf="purchases.length > 0" class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Method</th>
+                <th>Points</th>
+                <th>Amount</th>
+                <th>Reference</th>
+                <th>Proof</th>
+                <th>Admin note</th>
+                <th>Date</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of purchases">
+                <td><span class="status-pill">{{ item.status }}</span></td>
+                <td>{{ item.paymentMethod }}</td>
+                <td class="fw-bold">{{ item.points }}</td>
+                <td>{{ item.amount }} {{ item.currency }}</td>
+                <td>{{ item.proofReference || '-' }}</td>
+                <td>
+                  <button
+                    *ngIf="item.proofFileName"
+                    class="btn btn-sm btn-outline-primary"
+                    type="button"
+                    (click)="openProof(item)"
+                  >
+                    Open
+                  </button>
+                  <span *ngIf="!item.proofFileName">-</span>
+                </td>
+                <td>{{ item.adminNote || '-' }}</td>
+                <td>{{ item.createdAt | date : 'short' }}</td>
+                <td>
+                  <button
+                    *ngIf="item.status === 'refused'"
+                    class="btn btn-sm btn-outline-primary"
+                    type="button"
+                    (click)="openEditPurchase(item)"
+                  >
+                    Edit
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="wallet-panel" *ngIf="activeSection === 'activity'">
+        <div class="panel-head">
+          <div>
+            <h2>Recent activity</h2>
+            <p>Wallet credits, debits, refunds, and payment credits.</p>
+          </div>
+        </div>
+
+        <div *ngIf="isLoading" class="empty-state">Loading...</div>
+        <div *ngIf="!isLoading && transactions.length === 0" class="empty-state">
+          No wallet activity yet.
+        </div>
+
+        <div *ngIf="transactions.length > 0" class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Source</th>
+                <th>Points</th>
+                <th>Balance</th>
+                <th>Note</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of transactions">
+                <td><span class="status-pill">{{ item.type }}</span></td>
+                <td>{{ item.source }}</td>
+                <td class="fw-bold">{{ item.points }}</td>
+                <td>{{ item.balanceAfter }}</td>
+                <td>{{ item.note || '-' }}</td>
+                <td>{{ item.createdAt | date : 'short' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
   </section>
 </main>
